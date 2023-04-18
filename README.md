@@ -13,11 +13,11 @@ Bootstrap for responsive design
 JavaScript for interactivity and client-side validation
 # Installation and Usage
 Clone the repository to your local machine using Git.
-` bash
+``` bash
 Copy code
 git clone https://github.com/your_username/your_repository.git
 Open the solution file TodoList.sln in Visual Studio.
-`
+```
 Build the solution and run the project to launch the application.
 
 You should see the application running in your default web browser.
