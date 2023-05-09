@@ -8296,8 +8296,8 @@
     transition: all 0.3s; }
   
   .btn.btn-primary {
-    background: #866ec7;
-    border-color: #866ec7; }
+    background: var(--primary);
+    border-color: var(--primary); }
     .btn.btn-primary:hover, .btn.btn-primary:focus {
       background: #866ec7 !important;
       border-color: #866ec7 !important; }
