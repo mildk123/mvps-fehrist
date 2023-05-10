@@ -1,11 +1,13 @@
+/* GLOBAL STYLES */
+
 :root {
   --primary: #11abb2;
   --primaryAlt: #0c7075;
   --secondary: #16d8e1;
   --secondaryAlt: #119ca3;
-  --archivedState: #0e173d;
-  --deleteState: #a31111;
-  --completeState: #005d20;
+  --archivedState: #ffc107;
+  --deleteState: #dc3545;
+  --completeState: #39985a;
 
   --background: #eaeaea;
   --light: #fafafa;
@@ -21,8 +23,10 @@
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 }
-*,*:focus,*:hover{
-  outline:none;
+*,
+*:focus,
+*:hover {
+  outline: none;
 }
 #content {
   background-color: var(--background);
@@ -41,6 +45,7 @@
   border-color: var(--secondary) !important;
 }
 
+/* HOME PAGE STYLE */
 .fab-container {
   display: flex;
   flex-direction: column;
@@ -131,13 +136,39 @@
 #cards-container {
   padding: 2.25rem 0px;
   display: flex;
-  justify-content: space-around;
   flex-wrap: wrap;
+  justify-content: space-around;
 }
 .card-todo {
   border-radius: 25px;
-  padding: 0px;
-  margin: 20px;
+  max-height: 520px;
+  height: fit-content;
+  margin: 5px;
+  padding: 5px;
+  min-width: 250px;
+  /* height: 200px; */
+}
+.card-body {
+  overflow: hidden; /* Optional: Hide overflowing content */
+  padding: 10px;
+}
+
+.card-details-container {
+  max-height: 200px;
+  overflow: hidden; /* Optional: Hide overflowing content */
+}
+.card-heading {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0px;
+}
+.card-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .card-todo-action-strip {
@@ -148,23 +179,20 @@
 }
 
 .todo-action {
-  display: inline;
-  padding: 5px 15px;
+  display: inline-block;
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer;
 }
 .todo-action i {
-  font-size: 32px;
+  font-size: 22px;
   color: var(--primary);
 }
 
-#todoTitle {
-  font-size: 22px;
-}
 
-.textarea[contenteditable]:empty::before {
-  content: "Take a note...";
-  background-color: #fff;
-}
 
+
+/* ADD NEW CARD STYLE */
 #todoDesc {
   overflow-y: auto;
   min-height: 40px;
@@ -183,12 +211,33 @@
   background-clip: padding-box;
 }
 
+#todoTitle {
+  font-size: 22px;
+}
+
+.textarea[contenteditable]:empty::before {
+  content: "Take a note...";
+  background-color: #fff;
+}
+
+/* PAGES STYLES */
+#completed-cards-container,
+#archived-cards-container,
+#deleted-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.isArchived,
+.isCompleted,
+.isDeleted {
+  max-width: 350px;
+}
 .isArchived {
   background-color: var(--archivedState);
+  color: white;
 }
 .isArchived .card-todo-action-strip i {
   color: white;
-  border: 2px solid white;
   padding: 5px;
   border-radius: 5px;
   cursor: pointer;
@@ -200,14 +249,13 @@
 }
 .isCompleted .card-todo-action-strip i {
   color: white;
-  border: 2px solid white;
   padding: 5px;
   border-radius: 5px;
   cursor: pointer;
 }
-.isDeleted{
+.isDeleted {
   background-color: var(--deleteState);
-  color: black;
+  color: white;
 }
 .isDeleted .card-todo-action-strip i {
   color: white;
@@ -215,4 +263,160 @@
   padding: 5px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+/*  CARD STYLES  */
+.delete-button {
+  position: absolute;
+  right: 30px;
+  background-color: var(--deleteState);
+  margin-top: 10px;
+  color: white;
+  border-radius: 50px;
+}
+
+.card-image {
+  width: 100%;
+  height: 0;
+  padding-bottom: 75%; /* Adjust this value to control the aspect ratio of the image */
+  position: relative;
+  overflow: hidden;
+}
+
+.card-image img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-text {
+  /* Add your desired styles for the card text */
+}
+
+.card-todo-action-strip {
+  /* Add your desired styles for the action strip */
+}
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 5px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.image-wrapper {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 100%;
+}
+
+.image-wrapper img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease-in-out;
+}
+
+.image-wrapper:hover img {
+  transform: translate(-50%, -50%) scale(1.1);
+  filter: none;
+}
+
+.image-wrapper:not(:hover) img {
+  filter: grayscale(100%);
+}
+
+/* COLOR SELECTION FOR CARD */
+
+:root {
+  --card-white: #FFFFFF;
+  --card-red: #f28b82;
+  --card-orange: #fbbc04;
+  --card-yellow: #fff475;
+  --card-green: #ccff90;
+  --card-turquoise: #a7ffeb;
+  --card-blue: #cbf0f8;
+  --card-dark-blue: #aecbfa;
+  --card-purple: #d7aefb;
+  --card-pink: #fdcfe8;
+  --card-brown: #e6c9a8;
+  --card-grey: #e8eaed;
+}
+
+/* Color palette */
+.color-palette {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  transform: translate3d(-100px, -75px, 0px) !important;
+  z-index: 999;
+  width: 200px;
+}
+
+/* Stickers inside palette */
+.color-palette div {
+  box-sizing: border-box;
+  height: 22px;
+  width: 22px;
+  margin: 1px;
+  opacity: 1;
+  cursor: pointer;
+  display: inline-block;
+  border: 2px solid black;
+  outline: none !important;
+  z-index: 999;
+}
+
+/* When hovering a sticker, display grey circle around */
+.color-palette div:hover {
+  border-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Always circle white color, otherwise it's invisible */
+.color-palette div {
+  border-color: rgba(0, 0, 0, 0.251) !important;
+}
+
+
+/* Background colors */
+.bg-white {
+  background-color: var(--card-white);
+}
+.bg-red {
+  background-color: var(--card-red);
+}
+.bg-orange {
+  background-color: var(--card-orange);
+}
+.bg-yellow {
+  background-color: var(--card-yellow);
+}
+.bg-green {
+  background-color: var(--card-green);
+}
+.bg-turquoise {
+  background-color: var(--card-turquoise);
+}
+.bg-blue {
+  background-color: var(--card-blue);
+}
+.bg-dark-blue {
+  background-color: var(--card-dark-blue);
+}
+.bg-purple {
+  background-color: var(--card-purple);
+}
+.bg-pink {
+  background-color: var(--card-pink);
+}
+.bg-brown {
+  background-color: var(--card-brown);
+}
+.bg-grey {
+  background-color: var(--card-grey);
 }
