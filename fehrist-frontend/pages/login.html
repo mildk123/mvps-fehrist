@@ -8,10 +8,11 @@
     <link
       href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900"
       rel="stylesheet"
-    /> <link
-    rel="stylesheet"
-    href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-  />
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <link rel="stylesheet" href="../css/auth.css" />
   </head>
   <body class="main">
@@ -30,43 +31,38 @@
 
           <div class="signin-form">
             <h2 class="form-title">Sign up</h2>
-            <form method="POST" class="register-form" id="login-form">
+            <form class="register-form" id="login-form">
               <div class="form-group">
-                <label for="your_name"
-                  ><i class="fa fa-envelope-o"></i
-                ></label>
+                <label for="LoginEmailBox"
+                  ><i class="fa fa-envelope-o"
+                    ><span style="color: red"> *</span></i
+                  ></label
+                >
                 <input
                   type="text"
                   name="email"
-                  id="emailLogin"
+                  id="LoginEmailBox"
                   placeholder="john@doe.com"
                 />
               </div>
               <div class="form-group">
-                <label for="your_pass"><i class="fa fa-lock"></i></label>
+                <label for="LoginPassBox"
+                  ><i class="fa fa-lock">
+                    <span style="color: red"> *</span></i
+                  ></label
+                >
                 <input
                   type="password"
                   name="your_pass"
-                  id="your_pass"
+                  id="LoginPassBox"
                   placeholder="Password"
                 />
               </div>
-              <div class="form-group">
-                <input
-                  type="checkbox"
-                  name="remember-me"
-                  id="remember-me"
-                  class="agree-term"
-                />
-                <label for="remember-me" class="label-agree-term"
-                  ><span><span></span></span>Remember me</label
-                >
-              </div>
               <div class="form-group form-button">
                 <input
-                  type="submit"
-                  name="signin"
-                  id="signin"
+                  type="button"
+                  name="LoginBtn"
+                  id="LoginBtn"
                   class="form-submit"
                   value="Log in"
                 />
@@ -96,5 +92,11 @@
         </div>
       </div>
     </section>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/js/script.js"></script>
   </body>
 </html>
