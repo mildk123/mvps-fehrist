@@ -169,7 +169,6 @@ $("#todoImage").on("change", function () {
   var imageContainer = $("#imageContainer");
   for (var i = 0; i < this.files.length; i++) {
     imageList.push(this.files[i]);
-
     var reader = new FileReader();
     reader.onload = function (e) {
       var item = `<div class="NewImageBox">
@@ -187,30 +186,49 @@ $("#todoImage").on("change", function () {
     reader.readAsDataURL(this.files[i]);
   }
 });
+$("#AddTaskBtn").on("click", () => {
+  SET_Task();
+});
+$("#FABBtn").on("click", ()=>{
+  AddTaskModal();
+})
+
+AddTaskModal = () =>{
+  $("#taskID").empty();
+  $("#todoTitle").val("");
+  $("#todoDesc").empty();
+  $("#todoColor").val(0);
+  $("#todoDueDate").empty();
+  $("#imageContainer").empty();
+  $("#addTODOModal").modal("toggle");
+}
 // remove image from card during addition
 _RemoveImage = (context, index) => {
   imageList.splice(index, 1);
   context.parentNode.remove();
 };
-$("#AddTaskBtn").on("click", () => {
-  SET_Task();
-});
 
 SET_Task = () => {
+  debugger
   var count = 1;
+  var taskID = $("#taskID").text() == "" ? "new" : $("#taskID").text();
+  console.log(taskID)
   var title = $("#todoTitle").val();
   var desc = $("#todoDesc").text();
+  var color = $("#todoColor option:selected").val();
+  var dueDateTime = $("#todoDueDate").val();
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
   var formdata = new FormData();
+  formdata.append("T_TASKID", taskID);
   formdata.append("T_TITLE", title);
   formdata.append("T_DESC", desc);
   formdata.append("T_STATUS", "Added");
-  formdata.append("T_COLOR", "White");
-  formdata.append("T_DUE_DATE_TIME", new Date().toLocaleString());
-  formdata.append("T_ADDED_DATE_TIME", new Date().toLocaleString());
+  formdata.append("T_COLOR", color);
+  formdata.append("T_DUE_DATE_TIME", dueDateTime);
+  formdata.append("T_ADDED_DATE_TIME", (new Date()).toISOString().slice(0, 16));
   imageList.forEach((image) => {
     formdata.append(`Files[${count}]`, image);
     count++;
@@ -265,7 +283,9 @@ GET_Tasks = (status) => {
         container.empty();
         $.each(data, function (index, element) {
           try {
-            var item = `<div class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12" style="background-color: ${element.color}">
+            var item = `<div class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12" style="background-color: ${
+              element.color
+            }">
           <div class="card-body">
             <div class="image-grid">
               ${
@@ -304,8 +324,8 @@ GET_Tasks = (status) => {
                   tabindex="-1"
                 >
                 <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-white"></div>
+                  element.taskID
+                }')" class="bg-white"></div>
                   <div onClick="_changeColor(this,'${
                     element.taskID
                   }')" class="bg-red"></div>
@@ -333,7 +353,8 @@ GET_Tasks = (status) => {
                   <div onClick="_changeColor(this,'${
                     element.taskID
                   }')" class="bg-pink"></div>
-                  <div onClick="_changeColor(this,'${element.taskID
+                  <div onClick="_changeColor(this,'${
+                    element.taskID
                   }')" class="bg-brown"></div>
                   <div onClick="_changeColor(this, '${
                     element.taskID
@@ -345,6 +366,11 @@ GET_Tasks = (status) => {
               }')">
                 <i class="fa fa-check-circle"></i>
               </li>
+              <btn class="todo-action" onclick="ViewTask('${
+                element.taskID
+              }')">
+                <i class="fa fa-pencil"></i>
+              </btn>
             </div>
           </div>
         </div>`;
@@ -353,6 +379,56 @@ GET_Tasks = (status) => {
           }
 
           container.append(item);
+        });
+      }
+    })
+    .catch((err) => {
+      alert("Unable to connect to server. Please contact administrator.");
+    });
+};
+
+ViewTask = (taskID) => {
+  var userProfile = document.cookie;
+  var cookieValue = JSON.parse(userProfile.split("=")[1]);
+  var token = "Bearer " + cookieValue.token.data;
+  fetch(`${BASE_URL}/api/user/get-single-task?taskID=${taskID}`, {
+    method: "GET",
+    headers: {
+      Authorization: token,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((result) => {
+      return result.json();
+    })
+    .then((response) => {
+      if (response.status == "Redirect")
+        window.location.pathname = "/pages/login.html";
+      else if (response.status == "FAIL") {
+        console.log(response.msg);
+      } else if (response.status == "PASS") {
+        debugger
+        var data = response.response;
+        $("#taskID").text(data.taskID);
+        $("#todoTitle").val(data.title);
+        $("#todoDesc").text(data.desc);
+        $("#todoColor").val(data.color);
+        $("#todoDueDate").val(data.dueDate);
+        var imageContainer = $("#imageContainer");
+        $("#addTODOModal").modal("toggle");
+        $.each(data.imageList, function (index, element) {
+          imageList.push(element);
+          var item = `<div class="NewImageBox">
+                          <img src="${BASE_URL}${
+            element.imagePath
+          }" style="max-width: 100%; height: auto; margin-bottom: 20px;">
+                          <button class="btn delete-button"  onclick="_RemoveImage(this, ${
+                            imageList.length - 1
+                          })">
+                            <i class="fa fa-times"></i>
+                          </button>
+                        </div>`;
+          imageContainer.append(item);
         });
       }
     })
@@ -429,6 +505,16 @@ _ArchiveTask = (taskID) => {
     });
 };
 
+//Most browsers seem to return the RGB value
+//Function to Convert RGB to Hex Code
+function rgb2hex(rgb) {
+  rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  function hex(x) {
+    return ("0" + parseInt(x).toString(16)).slice(-2);
+  }
+  return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+}
+
 _changeColor = (context, taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
@@ -437,7 +523,8 @@ _changeColor = (context, taskID) => {
   colorSelected = window
     .getComputedStyle(context, null)
     .getPropertyValue("background-color");
-    context.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor =
+  colorSelected = rgb2hex(colorSelected);
+  context.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor =
     colorSelected;
 
   fetch(`${BASE_URL}/api/user/update-color`, {

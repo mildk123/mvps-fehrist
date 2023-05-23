@@ -51,6 +51,42 @@ namespace fehrist.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("api/user/get-single-task")]
+        public ResponseModel<GET_AllTasksResponse> GET_Task_Single([FromUri] int taskID)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    UserServices service = new UserServices();
+                    ResponseModel<GET_AllTasksResponse> res = service.GET_Task_Single(identity, taskID);
+                    return res;
+
+                }
+                else
+                {
+                    return new ResponseModel<GET_AllTasksResponse>
+                    {
+                        response = null,
+                        msg = "Please login with your account credentials.",
+                        status = "Redirect"
+                    };
+                }
+            }
+            else
+            {
+                return new ResponseModel<GET_AllTasksResponse>
+                {
+                    response = null,
+                    msg = "Please login with your account credentials.",
+                    status = "Redirect"
+                };
+            }
+        }
+
+
         [HttpPost]
         [Route("api/user/add-card")]
         public GenericResponseModel SET_Task()

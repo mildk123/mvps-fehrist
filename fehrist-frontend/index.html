@@ -83,16 +83,13 @@
         </div>
         <div id="cards-container">
           <!-- all the todos go here -->
-          
         </div>
 
-        <div class="fabToAdd">
+        <div class="fabToAdd" id="FABBtn">
           <!-- FAB Button -->
           <div class="fab-container">
             <div
               class="fab shadow"
-              data-toggle="modal"
-              data-target="#addTODOModal"
             >
               <div class="fab-content">
                 <img src="./images/plus.png" />
@@ -106,12 +103,13 @@
           <div class="modal-dialog">
             <div class="modal-content" id="modalCont" style="height: auto">
               <div class="modal-header">
-                <h5 class="modal-title">Create a new to-do</h5>
+                <h5 class="modal-title">Set To-Do</h5>
                 <button type="button" class="close" data-dismiss="modal">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
+               
                 <!-- IMAGE BOX -->
                 <div id="imageContainer">
                   <!-- Selected Images will be added here -->
@@ -131,8 +129,33 @@
                   id="todoDesc"
                   contenteditable
                 ></span>
+                <div class="form-group">
+                  <select class="form-control" id="todoColor">
+                    <option value="0">Select a color</option>
+                    <option value="#FFFFFF">White</option>
+                    <option value="#F28B82">Red</option>
+                    <option value="#FBBC04">Orange</option>
+                    <option value="#FFF475">Yellow</option>
+                    <option value="#CCFF90">Green</option>
+                    <option value="#A7FFEB">Turquoise</option>
+                    <option value="#CBF0F8">Blue</option>
+                    <option value="#AECBFA">Dark Blue</option>
+                    <option value="#D7AEFB">Purple</option>
+                    <option value="#FDCFE8">Pink</option>
+                    <option value="#E6C9A8">Brown</option>
+                    <option value="#E8EAED">Grey</option>
+                  </select>
+                  <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="datetime-local" id="todoDueDate" class="form-control" />
+                  </div>
+                </div>
+               
               </div>
               <div class="modal-footer">
+                <div>
+                  <label id="taskID"></label>
+                </div>
                 <input
                   type="file"
                   class="form-control-file"
@@ -153,7 +176,9 @@
                 >
                   Cancel
                 </button>
-                <button type="button" class="btn btn-primary" id="AddTaskBtn">Done</button>
+                <button type="button" class="btn btn-primary" id="AddTaskBtn">
+                  Done
+                </button>
               </div>
             </div>
           </div>
@@ -166,5 +191,6 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/moment.js"></script>
   </body>
 </html>

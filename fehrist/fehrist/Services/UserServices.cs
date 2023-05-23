@@ -195,6 +195,30 @@ namespace fehrist.Services
             }
         }
 
+        public ResponseModel<GET_AllTasksResponse> GET_Task_Single(ClaimsIdentity identity, int taskID)
+        {
+            IEnumerable<Claim> claims = identity.Claims;
+            int accID = Int32.Parse(claims.Where(x => x.Type == "accountID").FirstOrDefault()?.Value);
+
+            UserAccessor accessor = new UserAccessor();
+            GET_AllTasksResponse result = accessor.GET_Task_Single(accID, taskID);
+            ResponseModel<GET_AllTasksResponse> response = new ResponseModel<GET_AllTasksResponse>();
+            if (result != null)
+            {
+                response.status = "PASS";
+                response.msg = "Task retrieved successfully.";
+                response.response = result;
+                return response;
+            }
+            else
+            {
+                response.status = "FAIL";
+                response.msg = "No task found. Please try again.";
+                response.response = null;
+                return response;
+            }
+        }
+
         public GenericResponseModel SET_Task(ClaimsIdentity identity)
         {
             IEnumerable<Claim> claims = identity.Claims;
@@ -209,6 +233,7 @@ namespace fehrist.Services
                 filesList.Add(HttpContext.Current.Request.Files[i]);
 
             }
+            var taskID = data["T_TASKID"] != "new" ? Int32.Parse(data["T_TASKID"]) : 0;
             var title = data["T_TITLE"].ToString();
             var desc = data["T_DESC"].ToString();
             var status = data["T_STATUS"].ToString();
@@ -216,7 +241,7 @@ namespace fehrist.Services
             var dueDate = data["T_DUE_DATE_TIME"].ToString();
             var addedDate = data["T_ADDED_DATE_TIME"].ToString();
 
-            string result = accessor.SET_Task(accID, title, desc, status, color, dueDate, addedDate, filesList);
+            string result = accessor.SET_Task(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList);
 
             GenericResponseModel response = new GenericResponseModel();
             if (result != null)

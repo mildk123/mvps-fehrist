@@ -139,52 +139,136 @@ namespace fehrist.Accessors
             }
         }
 
-        public string SET_Task(int accID, string title, string desc, string status, string color, string dueDate, string addedDate, List<HttpPostedFile> filesList)
+        public GET_AllTasksResponse GET_Task_Single(int accID, int taskID)
         {
-            try
+            var selectedTask = DB.TASKS.Where(x => x.ACCOUNTID == accID && x.TASKID == taskID).FirstOrDefault();
+            if (selectedTask != null)
             {
-                TASK newTask = new TASK()
+                GET_AllTasksResponse taskResponse = new GET_AllTasksResponse
                 {
-                    ACCOUNTID = accID,
-                    T_TITLE = title,
-                    T_DESC = desc,
-                    T_COLOR = color,
-                    T_ADDED_DATE_TIME = addedDate,
-                    T_DUE_DATE_TIME = dueDate,
-                    T_STATUS = status.ToUpper()
+                    taskID = selectedTask.TASKID,
+                    title = selectedTask.T_TITLE,
+                    desc = selectedTask.T_DESC,
+                    color = selectedTask.T_COLOR,
+                    dueDate = selectedTask.T_DUE_DATE_TIME
                 };
-                DB.TASKS.Add(newTask);
-                DB.SaveChanges();
-                for (int i = 0; i < filesList.Count; i++)
+
+                // Retrieve the associated images for the current task
+                var taskImages = DB.TASK_IMAGES.Where(i => i.TASKID == selectedTask.TASKID).ToList();
+                if (taskImages != null)
                 {
-                    var file = filesList[i];
-
-                    if (file != null && file.ContentLength > 0)
+                    List<ImagesModel> imgs = new List<ImagesModel>();
+                    foreach (var item in taskImages)
                     {
-                        var fileName = Path.GetFileName(file.FileName);
-                        bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath($"~/storage/images/{accID}/"));
-                        if (!exists)
-                            System.IO.Directory.CreateDirectory(HttpContext.Current.Server.MapPath($"~/storage/images/{accID}/"));
-                        var path = Path.Combine(HttpContext.Current.Server.MapPath($@"~/storage/images/{accID}/"), fileName);
-                        file.SaveAs(path);
-
-                        TASK_IMAGES newImage = new TASK_IMAGES()
+                        ImagesModel img = new ImagesModel()
                         {
-                            TASKID = newTask.TASKID,
-                            TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null
+                            imageID = item.IMAGEID,
+                            imagePath = item.TI_PATH
                         };
-                        DB.TASK_IMAGES.Add(newImage);
-                        DB.SaveChanges();
+                        imgs.Add(img);
                     }
+                    taskResponse.imageList = imgs;
                 }
-                return "Successfully saved task";
-
+                return taskResponse;
             }
-            catch (Exception)
+            else
             {
                 return null;
             }
-            //DB.TASKS.Add(request);
+        }
+
+        public string SET_Task(int accID, int taskID, string title, string desc, string status, string color, string dueDate, string addedDate, List<HttpPostedFile> filesList)
+        {
+            if (taskID == 0)
+            {
+                try
+                {
+                    TASK newTask = new TASK()
+                    {
+                        ACCOUNTID = accID,
+                        T_TITLE = title,
+                        T_DESC = desc,
+                        T_COLOR = color,
+                        T_ADDED_DATE_TIME = addedDate,
+                        T_DUE_DATE_TIME = dueDate,
+                        T_STATUS = status.ToUpper()
+                    };
+                    DB.TASKS.Add(newTask);
+                    DB.SaveChanges();
+                    for (int i = 0; i < filesList.Count; i++)
+                    {
+                        var file = filesList[i];
+
+                        if (file != null && file.ContentLength > 0)
+                        {
+                            var fileName = Path.GetFileName(file.FileName);
+                            bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath($"~/storage/images/{accID}/"));
+                            if (!exists)
+                                System.IO.Directory.CreateDirectory(HttpContext.Current.Server.MapPath($"~/storage/images/{accID}/"));
+                            var path = Path.Combine(HttpContext.Current.Server.MapPath($@"~/storage/images/{accID}/"), fileName);
+                            file.SaveAs(path);
+
+                            TASK_IMAGES newImage = new TASK_IMAGES()
+                            {
+                                TASKID = newTask.TASKID,
+                                TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null
+                            };
+                            DB.TASK_IMAGES.Add(newImage);
+                            DB.SaveChanges();
+                        }
+                    }
+                    return "Successfully saved task";
+
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                // UPDATE OLD TASK
+                var updateTask = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
+                if (updateTask != null)
+                {
+                    updateTask.T_COLOR = color;
+                    updateTask.T_TITLE = title;
+                    updateTask.T_DESC = desc;
+                    updateTask.T_DUE_DATE_TIME = dueDate;
+                    updateTask.TASK_IMAGES.Clear();
+                    for (int i = 0; i < filesList.Count; i++)
+                    {
+                        var file = filesList[i];
+
+                        if (file != null && file.ContentLength > 0)
+                        {
+                            var fileName = Path.GetFileName(file.FileName);
+                            bool exists = System.IO.Directory.Exists(HttpContext.Current.Server.MapPath($"~/storage/images/{accID}/"));
+                            if (!exists)
+                                System.IO.Directory.CreateDirectory(HttpContext.Current.Server.MapPath($"~/storage/images/{accID}/"));
+                            var path = Path.Combine(HttpContext.Current.Server.MapPath($@"~/storage/images/{accID}/"), fileName);
+                            file.SaveAs(path);
+
+                            TASK_IMAGES newImage = new TASK_IMAGES()
+                            {
+                                TASKID = updateTask.TASKID,
+                                TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null
+                            };
+                            DB.TASK_IMAGES.Add(newImage);
+
+                        }
+                    }
+                    DB.SaveChanges();
+
+                    return "Successfully updated task";
+
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
         }
 
         public string DELETE_Task(int accID, int taskID)
@@ -194,7 +278,7 @@ namespace fehrist.Accessors
                 var task = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
                 if (task != null)
                 {
-                    
+
                     var taskImages = DB.TASK_IMAGES.Where(x => x.TASKID == taskID).ToList();
                     if (taskImages.Count > 0)
                     {
@@ -291,7 +375,7 @@ namespace fehrist.Accessors
 
         public List<GET_AllTasksResponse> SEARCH_Tasks(int accID, string searchTerm, string status)
         {
-            var allTasks = DB.TASKS.Where(x => x.ACCOUNTID == accID && 
+            var allTasks = DB.TASKS.Where(x => x.ACCOUNTID == accID &&
             x.T_STATUS == status &&
             x.T_TITLE.ToLower().Contains(searchTerm.ToLower()) ||
             x.T_DESC.ToLower().Contains(searchTerm.ToLower())
