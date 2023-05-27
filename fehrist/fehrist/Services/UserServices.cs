@@ -9,6 +9,7 @@ using fehrist.Models.API_Models.Response.User;
 using System.Web.Helpers;
 using System.Security.Claims;
 using fehrist.Models;
+using Newtonsoft.Json;
 
 namespace fehrist.Services
 {
@@ -233,6 +234,7 @@ namespace fehrist.Services
                 filesList.Add(HttpContext.Current.Request.Files[i]);
 
             }
+
             var taskID = data["T_TASKID"] != "new" ? Int32.Parse(data["T_TASKID"]) : 0;
             var title = data["T_TITLE"].ToString();
             var desc = data["T_DESC"].ToString();
@@ -240,24 +242,48 @@ namespace fehrist.Services
             var color = data["T_COLOR"].ToString();
             var dueDate = data["T_DUE_DATE_TIME"].ToString();
             var addedDate = data["T_ADDED_DATE_TIME"].ToString();
+            var prevImages = data["T_PREV_IMAGE"];
 
-            string result = accessor.SET_Task(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList);
-
-            GenericResponseModel response = new GenericResponseModel();
-            if (result != null)
+            if (prevImages != "[]" && prevImages != "0")
             {
-                response.status = "PASS";
-                response.msg = "Tasks added successfully.";
-                response.response = result;
-                return response;
+                string result = accessor.UPDATE_TaskImage(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList, prevImages);
+                GenericResponseModel response = new GenericResponseModel();
+                if (result != null)
+                {
+                    response.status = "PASS";
+                    response.msg = "Tasks added successfully.";
+                    response.response = result;
+                    return response;
+                }
+                else
+                {
+                    response.status = "FAIL";
+                    response.msg = "No tasks found. Please try again later.";
+                    response.response = null;
+                    return response;
+                }
             }
             else
             {
-                response.status = "FAIL";
-                response.msg = "No tasks found. Please try again later.";
-                response.response = null;
-                return response;
+                string result = accessor.SET_Task(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList);
+                GenericResponseModel response = new GenericResponseModel();
+                if (result != null)
+                {
+                    response.status = "PASS";
+                    response.msg = "Tasks added successfully.";
+                    response.response = result;
+                    return response;
+                }
+                else
+                {
+                    response.status = "FAIL";
+                    response.msg = "No tasks found. Please try again later.";
+                    response.response = null;
+                    return response;
+                }
             }
+
+           
         }
 
         public GenericResponseModel DELETE_Tasks(ClaimsIdentity identity, int taskID)

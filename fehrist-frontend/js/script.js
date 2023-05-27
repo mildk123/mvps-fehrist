@@ -1,7 +1,61 @@
 // ADD IMAGE TO NEW TASK
 window.addEventListener("load", (event) => {
-  if (location.pathname == "/") {
+  if (location.pathname == "/" || location.pathname == "/index.html") {
     GET_Tasks("Added");
+    let timerInterval;
+    Swal.fire({
+      title: "Loading!",
+      timer: 500,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      willClose: () => {
+        clearInterval(timerInterval);
+      },
+    });
+  } else if (location.pathname == "/pages/trash.html") {
+    GET_Tasks("Deleted");
+    let timerInterval;
+    Swal.fire({
+      title: "Loading!",
+      timer: 500,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      willClose: () => {
+        clearInterval(timerInterval);
+      },
+    });
+  } else if (location.pathname == "/pages/archive.html") {
+    GET_Tasks("Archived");
+    let timerInterval;
+    Swal.fire({
+      title: "Loading!",
+      timer: 500,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      willClose: () => {
+        clearInterval(timerInterval);
+      },
+    });
+  } else if (location.pathname == "/pages/completed.html") {
+    GET_Tasks("Completed");
+    let timerInterval;
+    Swal.fire({
+      title: "Loading!",
+      timer: 500,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      willClose: () => {
+        clearInterval(timerInterval);
+      },
+    });
   }
 });
 
@@ -29,17 +83,29 @@ $("#SignupBtn").on("click", () => {
     pass.trim() === ""
   ) {
     // Name is empty
-    alert("Requried Fields marked with * cannot be empty !");
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Requried Fields marked with * cannot be empty !!",
+    });
     return;
   }
   if (!isValidEmail(email)) {
     // Invalid email format
-    alert("Please enter a valid email address.");
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Please enter a valid email address !",
+    });
     return;
   }
   if (pass !== cpass) {
     // Passwords do not match
-    alert("Passwords do not match. Please try again.");
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Passwords do not match. Please try again!",
+    });
     return;
   }
 
@@ -60,8 +126,12 @@ $("#SignupBtn").on("click", () => {
       return result.json();
     })
     .then((res) => {
-      console.log(2, res);
-      if (res.status == "FAIL") alert(res.msg);
+      if (res.status == "FAIL")
+        Swal.fire({
+          icon: "error",
+          title: "Error...",
+          text: res.msg,
+        });
       if (res.status == "PASS") {
         switch (res.response.roleName) {
           case "USER":
@@ -73,19 +143,23 @@ $("#SignupBtn").on("click", () => {
             window.location.replace("/");
             break;
           default:
-            alert(
-              "Invalid ID/Password. Please login using correct information."
-            );
+            Swal.fire({
+              icon: "error",
+              title: "Error...",
+              text: "Invalid ID/Password. Please login using correct information",
+            });
             break;
         }
         window.location.replace("/");
       }
     })
     .catch((err) => {
-      console.log(3, err);
-      alert(
-        "Unable to reach server at the moment. Please contact administrator"
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
     });
 });
 
@@ -94,13 +168,21 @@ $("#LoginBtn").on("click", () => {
   var pass = $("#LoginPassBox").val();
 
   if (email.trim() === "" || pass.trim() === "") {
-    // Name is empty
-    alert("Requried Fields marked with * cannot be empty !");
+    // email is empty
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Requried Fields marked with * cannot be empty !",
+    });
     return;
   }
   if (!isValidEmail(email)) {
     // Invalid email format
-    alert("Please enter a valid email address.");
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Please enter a valid email address.",
+    });
     return;
   }
   fetch(`${BASE_URL}/api/user/login-user`, {
@@ -117,7 +199,12 @@ $("#LoginBtn").on("click", () => {
       return result.json();
     })
     .then((res) => {
-      if (res.status == "FAIL") alert(res.msg);
+      if (res.status == "FAIL")
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: res.msg,
+        });
       if (res.status == "PASS") {
         switch (res.response.roleName) {
           case "USER":
@@ -129,18 +216,23 @@ $("#LoginBtn").on("click", () => {
             window.location.replace("/");
             break;
           default:
-            alert(
-              "Invalid ID/Password. Please login using correct information."
-            );
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Invalid ID/Password. Please login using correct information.",
+            });
             break;
         }
         window.location.replace("/");
       }
     })
     .catch((err) => {
-      alert(
-        "Unable to reach server at the moment. Please contact administrator"
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
     });
 });
 
@@ -155,15 +247,16 @@ deleteAllCookies = () => {
 };
 
 //Logout FUNCTION Faculty
-$("#logOutFacultyBtn").click(function (e) {
+$("#BtnLogout").click(function (e) {
   e.preventDefault();
   localStorage.clear();
   deleteAllCookies();
-  window.location.replace("/pages/faculty/login-faculty.html");
+  window.location.replace("/pages/login.html");
 });
 
 // HOME
 var imageList = [];
+var prevImageList = [];
 
 $("#todoImage").on("change", function () {
   var imageContainer = $("#imageContainer");
@@ -189,30 +282,31 @@ $("#todoImage").on("change", function () {
 $("#AddTaskBtn").on("click", () => {
   SET_Task();
 });
-$("#FABBtn").on("click", ()=>{
+$("#FABBtn").on("click", () => {
   AddTaskModal();
-})
+});
 
-AddTaskModal = () =>{
+AddTaskModal = () => {
   $("#taskID").empty();
   $("#todoTitle").val("");
   $("#todoDesc").empty();
   $("#todoColor").val(0);
-  $("#todoDueDate").empty();
+  $("#todoDueDate").val("");
   $("#imageContainer").empty();
+  imageList.length = 0;
+  prevImageList = 0;
   $("#addTODOModal").modal("toggle");
-}
+};
 // remove image from card during addition
 _RemoveImage = (context, index) => {
   imageList.splice(index, 1);
+  prevImageList.splice(index, 1);
   context.parentNode.remove();
 };
 
 SET_Task = () => {
-  debugger
   var count = 1;
   var taskID = $("#taskID").text() == "" ? "new" : $("#taskID").text();
-  console.log(taskID)
   var title = $("#todoTitle").val();
   var desc = $("#todoDesc").text();
   var color = $("#todoColor option:selected").val();
@@ -228,7 +322,8 @@ SET_Task = () => {
   formdata.append("T_STATUS", "Added");
   formdata.append("T_COLOR", color);
   formdata.append("T_DUE_DATE_TIME", dueDateTime);
-  formdata.append("T_ADDED_DATE_TIME", (new Date()).toISOString().slice(0, 16));
+  formdata.append("T_ADDED_DATE_TIME", new Date().toISOString().slice(0, 16));
+  formdata.append("T_PREV_IMAGE", JSON.stringify(prevImageList));
   imageList.forEach((image) => {
     formdata.append(`Files[${count}]`, image);
     count++;
@@ -248,13 +343,22 @@ SET_Task = () => {
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {
-        alert(response.msg);
+        Swal.fire({
+          icon: "error",
+          title: "Error...",
+          text: response.msg,
+        });
       } else if (response.status == "PASS") {
         window.location.reload();
       }
     })
     .catch((err) => {
-      alert("Unable to connect to server. Please contact administrator.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
     });
 };
 
@@ -281,11 +385,12 @@ GET_Tasks = (status) => {
       } else if (response.status == "PASS") {
         var data = response.response;
         container.empty();
-        $.each(data, function (index, element) {
-          try {
-            var item = `<div class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12" style="background-color: ${
-              element.color
-            }">
+        if (location.pathname == "/" || location.pathname == "/index.html") {
+          $.each(data, function (index, element) {
+            try {
+              var item = `<div class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12" style="background-color: ${
+                element.color
+              }">
           <div class="card-body">
             <div class="image-grid">
               ${
@@ -366,24 +471,166 @@ GET_Tasks = (status) => {
               }')">
                 <i class="fa fa-check-circle"></i>
               </li>
-              <btn class="todo-action" onclick="ViewTask('${
-                element.taskID
-              }')">
+              <btn class="todo-action" onclick="ViewTask('${element.taskID}')">
                 <i class="fa fa-pencil"></i>
               </btn>
             </div>
           </div>
-        </div>`;
-          } catch (error) {
-            console.log(error);
-          }
-
-          container.append(item);
-        });
+              </div>`;
+            } catch (error) {
+              console.log(error);
+            }
+            container.append(item);
+          });
+        } else if (location.pathname == "/pages/trash.html") {
+          $.each(data, function (index, element) {
+            try {
+              var item = ` <div
+              class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isDeleted"
+            >
+              <div class="card-body">
+                <div class="image-grid">
+                  ${
+                    element.imageList != null
+                      ? element.imageList
+                          .map(function (IMG, index) {
+                            return `<div class="image-wrapper"><img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" /></div>`;
+                          })
+                          .join("")
+                      : ""
+                  }
+                </div>
+                <div class="card-details-container">
+                  <p class="card-text card-heading">${element.title}</p>
+                  <p class="card-text card-desc">
+                  ${element.desc}
+                  </p>
+                </div>
+                <!-- ACTIONS STRIP -->
+                <div class="card-todo-action-strip col-12">
+                  <li class="todo-action" onclick="_RestoreTask('${
+                    element.taskID
+                  }')">
+                    <span class="material-symbols-outlined">
+                      restore_from_trash
+                    </span>
+                  </li>
+                  <li class="todo-action" onclick="_DeleteTask('${
+                    element.taskID
+                  }')">
+                    <span class="material-symbols-outlined">
+                      delete_forever
+                    </span>
+                  </li>
+                </div>
+              </div>
+            </div>`;
+            } catch (error) {
+              console.log(error);
+            }
+            container.append(item);
+          });
+        } else if (location.pathname == "/pages/completed.html") {
+          $.each(data, function (index, element) {
+            try {
+              var item = `<div
+              class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isCompleted"
+            >
+              <div class="card-body">
+                <div class="image-grid">
+                  ${
+                    element.imageList != null
+                      ? element.imageList
+                          .map(function (IMG, index) {
+                            return `
+                  <div class="image-wrapper">
+                    <img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" />
+                  </div>
+                  `;
+                          })
+                          .join("")
+                      : ""
+                  }
+                </div>
+                <div class="card-details-container">
+                  <p class="card-text card-heading">${element.title}</p>
+                  <p class="card-text card-desc">${element.desc}</p>
+                </div>
+                <!-- ACTIONS STRIP -->
+                <div class="card-todo-action-strip col-12">
+                  <li
+                    class="todo-action"
+                    onclick="_DeleteTask('${element.taskID}')"
+                  >
+                    <span class="material-symbols-outlined"> delete </span>
+                  </li>
+                </div>
+              </div>
+            </div>`;
+            } catch (error) {
+              console.log(error);
+            }
+            container.append(item);
+          });
+        } else if (location.pathname == "/pages/archive.html") {
+          $.each(data, function (index, element) {
+            try {
+              var item = `<div
+              class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isArchived"
+            >
+              <div class="card-body">
+                <div class="image-grid">
+                  ${
+                    element.imageList != null
+                      ? element.imageList
+                          .map(function (IMG, index) {
+                            return `
+                  <div class="image-wrapper">
+                    <img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" />
+                  </div>
+                  `;
+                          })
+                          .join("")
+                      : ""
+                  }
+                </div>
+                <div class="card-details-container">
+                  <p class="card-text card-heading">${element.title}</p>
+                  <p class="card-text card-desc">${element.desc}</p>
+                </div>
+                <!-- ACTIONS STRIP -->
+                <!-- ACTIONS STRIP -->
+                <div class="card-todo-action-strip col-12">
+                  <li class="todo-action" onclick="_DeleteTask('${
+                    element.taskID
+                  }')"
+                  >
+                    <span class="material-symbols-outlined"> delete </span>
+                  </li>
+                  <li class="todo-action" onclick="_RestoreTask('${
+                    element.taskID
+                  }')"
+                  >
+                    <span class="material-symbols-outlined"> unarchive </span>
+                  </li>
+                </div>
+              </div>
+            </div>`;
+            } catch (error) {
+              console.log(error);
+            }
+            container.append(item);
+          });
+        }
       }
     })
     .catch((err) => {
-      alert("Unable to connect to server. Please contact administrator.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
     });
 };
 
@@ -407,17 +654,18 @@ ViewTask = (taskID) => {
       else if (response.status == "FAIL") {
         console.log(response.msg);
       } else if (response.status == "PASS") {
-        debugger
+        var imageContainer = $("#imageContainer");
+        imageContainer.empty();
+        prevImageList.length = 0;
         var data = response.response;
         $("#taskID").text(data.taskID);
         $("#todoTitle").val(data.title);
         $("#todoDesc").text(data.desc);
         $("#todoColor").val(data.color);
         $("#todoDueDate").val(data.dueDate);
-        var imageContainer = $("#imageContainer");
         $("#addTODOModal").modal("toggle");
         $.each(data.imageList, function (index, element) {
-          imageList.push(element);
+          prevImageList.push(element);
           var item = `<div class="NewImageBox">
                           <img src="${BASE_URL}${
             element.imagePath
@@ -433,75 +681,12 @@ ViewTask = (taskID) => {
       }
     })
     .catch((err) => {
-      alert("Unable to connect to server. Please contact administrator.");
-    });
-};
-
-_RemoveTask = (taskID) => {
-  var userProfile = document.cookie;
-  var cookieValue = JSON.parse(userProfile.split("=")[1]);
-  var token = "Bearer " + cookieValue.token.data;
-
-  fetch(`${BASE_URL}/api/user/update-status`, {
-    method: "POST",
-    headers: {
-      Authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      taskID: taskID,
-      status: "Deleted",
-    }),
-  })
-    .then((result) => {
-      return result.json();
-    })
-    .then((response) => {
-      if (response.status == "Redirect")
-        window.location.pathname = "/pages/login.html";
-      else if (response.status == "FAIL") {
-        alert(response.msg);
-      } else if (response.status == "PASS") {
-        alert("Task moved to trash");
-        window.location.reload();
-      }
-    })
-    .catch((err) => {
-      alert("Unable to connect to server. Please contact administrator.");
-    });
-};
-
-_ArchiveTask = (taskID) => {
-  var userProfile = document.cookie;
-  var cookieValue = JSON.parse(userProfile.split("=")[1]);
-  var token = "Bearer " + cookieValue.token.data;
-
-  fetch(`${BASE_URL}/api/user/update-status`, {
-    method: "POST",
-    headers: {
-      Authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      taskID: taskID,
-      status: "Archived",
-    }),
-  })
-    .then((result) => {
-      return result.json();
-    })
-    .then((response) => {
-      if (response.status == "Redirect")
-        window.location.pathname = "/pages/login.html";
-      else if (response.status == "FAIL") {
-        alert(response.msg);
-      } else if (response.status == "PASS") {
-        alert("Task moved to archive.");
-        window.location.reload();
-      }
-    })
-    .catch((err) => {
-      alert("Unable to connect to server. Please contact administrator.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
     });
 };
 
@@ -514,7 +699,6 @@ function rgb2hex(rgb) {
   }
   return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
-
 _changeColor = (context, taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
@@ -545,12 +729,21 @@ _changeColor = (context, taskID) => {
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {
-        alert(response.msg);
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured!",
+          text: response.msg,
+        });
       } else if (response.status == "PASS") {
       }
     })
     .catch((err) => {
-      alert("Unable to connect to server. Please contact administrator.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
     });
 };
 
@@ -577,28 +770,40 @@ _CompleteTask = (taskID) => {
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {
-        alert(response.msg);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: response.msg,
+        });
       } else if (response.status == "PASS") {
-        alert("Task Completed.");
         window.location.reload();
       }
     })
     .catch((err) => {
-      alert("Unable to connect to server. Please contact administrator.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
     });
 };
 
-// TRASH
-_DeleteTask = (taskID) => {
+_ArchiveTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/delete-card?taskID=${taskID}`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({
+      taskID: taskID,
+      status: "Archived",
+    }),
   })
     .then((result) => {
       return result.json();
@@ -607,12 +812,149 @@ _DeleteTask = (taskID) => {
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {
-        alert(response.msg);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: response.msg,
+        });
       } else if (response.status == "PASS") {
         window.location.reload();
       }
     })
     .catch((err) => {
-      alert("Unable to connect to server. Please contact administrator.");
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
+    });
+};
+
+// TRASH
+_DeleteTask = (taskID) => {
+  // hard delete
+  var userProfile = document.cookie;
+  var cookieValue = JSON.parse(userProfile.split("=")[1]);
+  var token = "Bearer " + cookieValue.token.data;
+
+  fetch(`${BASE_URL}/api/user/delete-card?taskID=${taskID}`, {
+    method: "GET",
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((result) => {
+      return result.json();
+    })
+    .then((response) => {
+      if (response.status == "Redirect") {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: response.msg,
+        });
+        window.location.pathname = "/pages/login.html";
+      } else if (response.status == "FAIL") {
+      } else if (response.status == "PASS") {
+        window.location.reload();
+      }
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
+    });
+};
+
+_RemoveTask = (taskID) => {
+  var userProfile = document.cookie;
+  var cookieValue = JSON.parse(userProfile.split("=")[1]);
+  var token = "Bearer " + cookieValue.token.data;
+
+  fetch(`${BASE_URL}/api/user/update-status`, {
+    method: "POST",
+    headers: {
+      Authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      taskID: taskID,
+      status: "Deleted",
+    }),
+  })
+    .then((result) => {
+      return result.json();
+    })
+    .then((response) => {
+      if (response.status == "Redirect") {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: response.msg,
+        });
+        window.location.pathname = "/pages/login.html";
+      } else if (response.status == "FAIL") {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: response.msg,
+        });
+      } else if (response.status == "PASS") {
+        window.location.reload();
+      }
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
+    });
+};
+
+_RestoreTask = (taskID) => {
+  var userProfile = document.cookie;
+  var cookieValue = JSON.parse(userProfile.split("=")[1]);
+  var token = "Bearer " + cookieValue.token.data;
+
+  fetch(`${BASE_URL}/api/user/update-status`, {
+    method: "POST",
+    headers: {
+      Authorization: token,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      taskID: taskID,
+      status: "Added",
+    }),
+  })
+    .then((result) => {
+      return result.json();
+    })
+    .then((response) => {
+      if (response.status == "Redirect")
+        window.location.pathname = "/pages/login.html";
+      else if (response.status == "FAIL") {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: response.msg,
+        });
+      } else if (response.status == "PASS") {
+        window.location.reload();
+      }
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
     });
 };

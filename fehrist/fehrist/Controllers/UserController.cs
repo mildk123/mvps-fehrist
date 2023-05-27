@@ -16,6 +16,31 @@ namespace fehrist.Controllers
 {
     public class UserController : ApiController
     {
+        [HttpPost]
+        [Route("api/user/verify-token")]
+        public string GET_TokenVerification()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    return "valid";
+                }
+                else
+                {
+                    return "expired";
+
+                }
+            }
+            else
+            {
+                return "invalid.";
+
+            }
+        }
+
+
         [HttpGet]
         [Route("api/user/get-cards")]
         public ResponseModel<List<GET_AllTasksResponse>> GET_Tasks([FromUri] string state)

@@ -186,7 +186,7 @@
 }
 .todo-action i {
   font-size: 22px;
-  color: var(--primary);
+  color: var(--dark);
 }
 
 
@@ -300,16 +300,17 @@
 .image-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: 5px;
+  grid-gap: 0px;
   width: 100%;
-  overflow: hidden;
+  max-height: 300px;
+  overflow: auto;
 }
 
 .image-wrapper {
   width: 100%;
   position: relative;
   overflow: hidden;
-  padding-bottom: 100%;
+  padding-bottom: 50%;
 }
 
 .image-wrapper img {
@@ -319,7 +320,7 @@
   transform: translate(-50%, -50%);
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 0.3s ease-in-out;
 }
 
