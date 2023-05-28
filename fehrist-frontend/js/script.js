@@ -315,8 +315,8 @@ AddTaskModal = () => {
   $("#todoColor").val(0);
   $("#todoDueDate").val("");
   $("#imageContainer").empty();
-  imageList.length = 0;
-  prevImageList = 0;
+  imageList = [];
+  prevImageList = [];
   $("#addTODOModal").modal("toggle");
 };
 // remove image from card during addition
@@ -397,13 +397,13 @@ GET_Tasks = (status) => {
     },
   })
     .then((result) => {
-      return result.json();
+      if (result.status == 200) return result.json();
+      else if (result.status == 401) return result.json();
     })
     .then((response) => {
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {
-        console.log(response.msg);
         container.empty();
         container.append("<h1>Oh no... so empty</h1>");
       } else if (response.status == "PASS") {
@@ -680,7 +680,7 @@ ViewTask = (taskID) => {
       } else if (response.status == "PASS") {
         var imageContainer = $("#imageContainer");
         imageContainer.empty();
-        prevImageList.length = 0;
+        prevImageList = [];
         var data = response.response;
         $("#taskID").text(data.taskID);
         $("#todoTitle").val(data.title);
@@ -1000,8 +1000,10 @@ _SearchTask = (status) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
   var container = $("#cards-container");
+  debugger
   if (term == "") {
     GET_Tasks(status);
+    return
   }
   fetch(`${BASE_URL}/api/user/tasks/?searchTerm=${term}&status=${status}`, {
     method: "GET",

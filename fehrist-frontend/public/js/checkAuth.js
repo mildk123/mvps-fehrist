@@ -20,67 +20,72 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// Initialize FB Login
-$(document).ready(function () {
-  $.ajaxSetup({ cache: true });
-  $.getScript("https://connect.facebook.net/en_US/sdk.js", function () {
-    FB.init({
-      appId: "793701339153959",
-      version: "v2.7", 
-    });
+if (location.pathname == "/pages/register.html") {
+  // Initialize FB Login
+  document.addEventListener("DOMContentLoaded", function () {
+    var script = document.createElement("script");
+    script.src = "https://connect.facebook.net/en_US/sdk.js";
+    script.async = true;
+    script.defer = true;
+    script.onload = function () {
+      FB.init({
+        appId: "793701339153959",
+        version: "v2.7",
+      });
+    };
+    document.head.appendChild(script);
   });
-});
-// FB Login on Click
-$("#FBLoginBtn").on("click", () => {
-  FB.login(
-    function (response) {
-      if (response.status === "connected") {
-        // Logged into your webpage and Facebook.
-        FB.api("/me", { fields: "name,email" }, function (response) {
-          console.log(response);
-          $("#RegNameBox").val(response.name);
-          $("#RegEmailBox").val(response.email);
-          Swal.fire({
-            icon: "info",
-            title: "Information",
-            text: "Passwords must be set manually!",
-          });
-        });
-      }
-    },
-    { scope: "email" }
-  );
-});
-// Google Login on Click
-$("#GPLoginBtn").on("click", () => {
-  google.accounts.id.initialize({
-    client_id:
-      "1050384600148-cg2luaft472hsre0tbgnktfvot6j54ue.apps.googleusercontent.com",
-    native_callback: loginGooglePlus,
-    callback: loginGooglePlus,
-  });
-  google.accounts.id.prompt();
-});
-// Google Login on callback
-function loginGooglePlus(response) {
-  console.log(response);
-  if (response.credential) {
-    var credToken = response.credential;
-    var decoded = jwt_decode(credToken);
-    console.log(decoded);
-    $("#RegNameBox").val(decoded.name);
-    $("#RegEmailBox").val(decoded.email);
-    Swal.fire({
-      icon: "info",
-      title: "Information",
-      text: "Passwords must be set manually!",
-    });
 
-  } else {
-    console.log("Google Sign-in was not successful.");
+  // FB Login on Click
+  $("#FBLoginBtn").on("click", () => {
+    FB.login(
+      function (response) {
+        if (response.status === "connected") {
+          // Logged into your webpage and Facebook.
+          FB.api("/me", { fields: "name,email" }, function (response) {
+            console.log(response);
+            $("#RegNameBox").val(response.name);
+            $("#RegEmailBox").val(response.email);
+            Swal.fire({
+              icon: "info",
+              title: "Information",
+              text: "Passwords must be set manually!",
+            });
+          });
+        }
+      },
+      { scope: "email" }
+    );
+  });
+  // Google Login on Click
+  $("#GPLoginBtn").on("click", () => {
+    google.accounts.id.initialize({
+      client_id:
+        "1050384600148-cg2luaft472hsre0tbgnktfvot6j54ue.apps.googleusercontent.com",
+      native_callback: loginGooglePlus,
+      callback: loginGooglePlus,
+    });
+    google.accounts.id.prompt();
+  });
+  // Google Login on callback
+  function loginGooglePlus(response) {
+    console.log(response);
+    if (response.credential) {
+      var credToken = response.credential;
+      var decoded = jwt_decode(credToken);
+      console.log(decoded);
+      $("#RegNameBox").val(decoded.name);
+      $("#RegEmailBox").val(decoded.email);
+      Swal.fire({
+        icon: "info",
+        title: "Information",
+        text: "Passwords must be set manually!",
+      });
+    } else {
+      console.log("Google Sign-in was not successful.");
+    }
   }
 }
-
 
 deleteAllCookies = () => {
   var cookies = document.cookie.split(";");
@@ -92,20 +97,21 @@ deleteAllCookies = () => {
   }
 };
 
-function isUserAuthenticated() {
+isUserAuthenticated = () => {
   const tokenString = getCookie("FehristCookie");
   var tokenJson = JSON.parse(tokenString);
   if (tokenJson) {
-    return fetch(BASE_URL + "/api/user/verify-token", {
+    return fetch(BASE_URL + "/api/token/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + tokenJson.token.data,
       },
-      body: JSON.stringify({}),
     })
       .then((res) => {
-        return res.json();
+        if (res.status == 200) return res.json();
+        else if (res.status == 400)
+          Swal.fire("Error", "Login session is invalid or expired! clear browser cache and try again  !");
       })
       .then((response) => {
         if (response == "valid") {

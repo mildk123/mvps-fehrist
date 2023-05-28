@@ -26,6 +26,7 @@
   </head>
   <body>
     <div class="wrapper d-flex align-items-stretch">
+      <!-- // SIDE BAR -->
       <nav id="sidebar">
         <div class="custom-menu">
           <button type="button" id="sidebarCollapse" class="btn btn-primary">
@@ -75,18 +76,23 @@
           </div>
         </div>
       </nav>
+      <!-- // SIDE BAR END-->
 
       <!-- Page Content  -->
-      <div id="content" class="p-4 p-md-5 pt-5">
-        <div id="searchContainer" class="col-5">
+      <div id="content" class="px-5">
+        <div id="searchContainer">
           <!-- SEARCH BAR -->
           <div class="inner-form">
-            <div class="serch-field">
-              
+            <div class="col-xl-5 col-lg- col-md-8 col-sm-11 serch-field">
               <button class="btn-search" type="button" id="SearchBtn">
                 <i class="fa fa-search"></i>
               </button>
-              <input id="SearchBox" type="text" placeholder="A big brown fox..." value="" />
+              <input
+                id="SearchBox"
+                type="text"
+                placeholder="A big brown fox..."
+                value=""
+              />
             </div>
           </div>
         </div>
@@ -200,7 +206,7 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
       // TODO: Add SDKs for Firebase products that you want to use
       // https://firebase.google.com/docs/web/setup#available-libraries
-    
+
       // Your web app's Firebase configuration
       const firebaseConfig = {
         apiKey: "AIzaSyABAnQOwYuzSbpUM6VoXSGjGhgF4eqqwLw",
@@ -208,20 +214,20 @@
         projectId: "fehrist-10618",
         storageBucket: "fehrist-10618.appspot.com",
         messagingSenderId: "707737493973",
-        appId: "1:707737493973:web:a89b75d19dc5ffd02fdd5c"
+        appId: "1:707737493973:web:a89b75d19dc5ffd02fdd5c",
       };
-    
+
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
     </script>
 
-<script src="/js/checkAuth.js"></script>
+    <script src="/js/checkAuth.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/popper.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/script.js"></script>
-    
+
     <script src="js/moment.js"></script>
   </body>
 </html>
