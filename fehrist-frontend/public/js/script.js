@@ -1000,8 +1000,10 @@ _SearchTask = (status) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
   var container = $("#cards-container");
+  debugger
   if (term == "") {
     GET_Tasks(status);
+    return
   }
   fetch(`${BASE_URL}/api/user/tasks/?searchTerm=${term}&status=${status}`, {
     method: "GET",
