@@ -201,6 +201,15 @@
   height: auto;
 }
 
+/* //  ABOUT PAGE STYLe */
+#about-container {
+  margin: 50px;
+  padding: 25px;
+  border-radius: 25px;
+  text-align: center;
+  background-color: var(--card-white);
+}
+
 /* ADD NEW CARD STYLE */
 #todoDesc {
   overflow-y: auto;
@@ -438,6 +447,11 @@
   #cards-container {
     padding: 0.5rem 0px;
   }
+  #about-container {
+    margin: 25px;
+    padding: 15px;
+    font-size: 14px;
+  }
 } 
 
 @media (max-width: 480px) {
@@ -454,5 +468,13 @@
   }
   #cards-container {
     padding: 0rem 0px;
+  }
+  #about-container {
+    margin: 15px;
+    padding: 5px;
+    font-size: 12px;
+  }
+  #about-container h1 {
+    font-size: 33px;
   }
 }
