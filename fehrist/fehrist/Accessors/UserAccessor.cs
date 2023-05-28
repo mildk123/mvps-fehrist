@@ -329,9 +329,6 @@ namespace fehrist.Accessors
             }
         }
 
-
-
-
         public string DELETE_Task(int accID, int taskID)
         {
             try
@@ -362,31 +359,31 @@ namespace fehrist.Accessors
             }
         }
 
-        public string UPDATE_Task(int taskID, int accID, string title, string desc, string color, string dueDate)
-        {
-            try
-            {
-                var taskSelected = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
-                if (taskSelected != null)
-                {
-                    taskSelected.T_TITLE = title;
-                    taskSelected.T_DESC = desc;
-                    taskSelected.T_COLOR = color;
-                    taskSelected.T_DUE_DATE_TIME = dueDate;
-                    DB.SaveChanges();
+        //public string UPDATE_Task(int taskID, int accID, string title, string desc, string color, string dueDate)
+        //{
+        //    try
+        //    {
+        //        var taskSelected = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
+        //        if (taskSelected != null)
+        //        {
+        //            taskSelected.T_TITLE = title;
+        //            taskSelected.T_DESC = desc;
+        //            taskSelected.T_COLOR = color;
+        //            taskSelected.T_DUE_DATE_TIME = dueDate;
+        //            DB.SaveChanges();
 
-                    return "Task updated succuessfully.";
-                }
-                else
-                {
-                    return "The selected task does not exists anymore.";
-                }
-            }
-            catch (Exception)
-            {
-                return "An error occured while updating current task. Please login again refresh the caches.";
-            }
-        }
+        //            return "Task updated succuessfully.";
+        //        }
+        //        else
+        //        {
+        //            return "The selected task does not exists anymore.";
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return "An error occured while updating current task. Please login again refresh the caches.";
+        //    }
+        //}
 
         public string UPDATE_Task_Status(int taskID, int accID, string status)
         {
@@ -436,12 +433,16 @@ namespace fehrist.Accessors
 
         public List<GET_AllTasksResponse> SEARCH_Tasks(int accID, string searchTerm, string status)
         {
+            var termLower = searchTerm == null ? "*" : searchTerm.ToLower();
+            var statusUpper = status.ToUpper();
+
             var allTasks = DB.TASKS.Where(x => x.ACCOUNTID == accID &&
-            x.T_STATUS == status &&
-            x.T_TITLE.ToLower().Contains(searchTerm.ToLower()) ||
-            x.T_DESC.ToLower().Contains(searchTerm.ToLower())
+            (x.T_STATUS == statusUpper &&
+            x.T_TITLE.Contains(termLower)) ||
+            (x.T_STATUS == statusUpper &&
+            x.T_DESC.Contains(termLower))
             ).ToList();
-            if (allTasks != null)
+            if (allTasks.Count != 0)
             {
                 List<GET_AllTasksResponse> taskList = new List<GET_AllTasksResponse>();
 

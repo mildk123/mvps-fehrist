@@ -20,72 +20,67 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-if (location.pathname == "/pages/register.html") {
-  // Initialize FB Login
-  document.addEventListener("DOMContentLoaded", function () {
-    var script = document.createElement("script");
-    script.src = "https://connect.facebook.net/en_US/sdk.js";
-    script.async = true;
-    script.defer = true;
-    script.onload = function () {
-      FB.init({
-        appId: "793701339153959",
-        version: "v2.7",
-      });
-    };
-    document.head.appendChild(script);
-  });
-
-  // FB Login on Click
-  $("#FBLoginBtn").on("click", () => {
-    FB.login(
-      function (response) {
-        if (response.status === "connected") {
-          // Logged into your webpage and Facebook.
-          FB.api("/me", { fields: "name,email" }, function (response) {
-            console.log(response);
-            $("#RegNameBox").val(response.name);
-            $("#RegEmailBox").val(response.email);
-            Swal.fire({
-              icon: "info",
-              title: "Information",
-              text: "Passwords must be set manually!",
-            });
-          });
-        }
-      },
-      { scope: "email" }
-    );
-  });
-  // Google Login on Click
-  $("#GPLoginBtn").on("click", () => {
-    google.accounts.id.initialize({
-      client_id:
-        "1050384600148-cg2luaft472hsre0tbgnktfvot6j54ue.apps.googleusercontent.com",
-      native_callback: loginGooglePlus,
-      callback: loginGooglePlus,
+// Initialize FB Login
+$(document).ready(function () {
+  $.ajaxSetup({ cache: true });
+  $.getScript("https://connect.facebook.net/en_US/sdk.js", function () {
+    FB.init({
+      appId: "793701339153959",
+      version: "v2.7", 
     });
-    google.accounts.id.prompt();
   });
-  // Google Login on callback
-  function loginGooglePlus(response) {
-    console.log(response);
-    if (response.credential) {
-      var credToken = response.credential;
-      var decoded = jwt_decode(credToken);
-      console.log(decoded);
-      $("#RegNameBox").val(decoded.name);
-      $("#RegEmailBox").val(decoded.email);
-      Swal.fire({
-        icon: "info",
-        title: "Information",
-        text: "Passwords must be set manually!",
-      });
-    } else {
-      console.log("Google Sign-in was not successful.");
-    }
+});
+// FB Login on Click
+$("#FBLoginBtn").on("click", () => {
+  FB.login(
+    function (response) {
+      if (response.status === "connected") {
+        // Logged into your webpage and Facebook.
+        FB.api("/me", { fields: "name,email" }, function (response) {
+          console.log(response);
+          $("#RegNameBox").val(response.name);
+          $("#RegEmailBox").val(response.email);
+          Swal.fire({
+            icon: "info",
+            title: "Information",
+            text: "Passwords must be set manually!",
+          });
+        });
+      }
+    },
+    { scope: "email" }
+  );
+});
+// Google Login on Click
+$("#GPLoginBtn").on("click", () => {
+  google.accounts.id.initialize({
+    client_id:
+      "1050384600148-cg2luaft472hsre0tbgnktfvot6j54ue.apps.googleusercontent.com",
+    native_callback: loginGooglePlus,
+    callback: loginGooglePlus,
+  });
+  google.accounts.id.prompt();
+});
+// Google Login on callback
+function loginGooglePlus(response) {
+  console.log(response);
+  if (response.credential) {
+    var credToken = response.credential;
+    var decoded = jwt_decode(credToken);
+    console.log(decoded);
+    $("#RegNameBox").val(decoded.name);
+    $("#RegEmailBox").val(decoded.email);
+    Swal.fire({
+      icon: "info",
+      title: "Information",
+      text: "Passwords must be set manually!",
+    });
+
+  } else {
+    console.log("Google Sign-in was not successful.");
   }
 }
+
 
 deleteAllCookies = () => {
   var cookies = document.cookie.split(";");
@@ -101,7 +96,7 @@ function isUserAuthenticated() {
   const tokenString = getCookie("FehristCookie");
   var tokenJson = JSON.parse(tokenString);
   if (tokenJson) {
-    return fetch(BASE_URL + "/api/token/verify", {
+    return fetch(BASE_URL + "/api/user/verify-token", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

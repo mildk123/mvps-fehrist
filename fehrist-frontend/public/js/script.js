@@ -109,7 +109,7 @@ $("#SignupBtn").on("click", () => {
     return;
   }
 
-  fetch(`${BASE_URL}/api/user/register`, {
+  fetch(`${BASE_URL}/api/user/register-user`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -185,7 +185,7 @@ $("#LoginBtn").on("click", () => {
     });
     return;
   }
-  fetch(`${BASE_URL}/api/user/login`, {
+  fetch(`${BASE_URL}/api/user/login-user`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json", // Adjust content type based on your API
@@ -351,7 +351,7 @@ SET_Task = () => {
     count++;
   });
 
-  fetch(`${BASE_URL}/api/user/tasks/create`, {
+  fetch(`${BASE_URL}/api/user/add-card`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -389,7 +389,7 @@ GET_Tasks = (status) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
   var container = $("#cards-container");
-  fetch(`${BASE_URL}/api/user/tasks?state=${status}`, {
+  fetch(`${BASE_URL}/api/user/get-cards?state=${status}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -662,7 +662,7 @@ ViewTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
-  fetch(`${BASE_URL}/api/user/tasks?taskID=${taskID}`, {
+  fetch(`${BASE_URL}/api/user/get-single-task?taskID=${taskID}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -735,7 +735,7 @@ _changeColor = (context, taskID) => {
   context.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor =
     colorSelected;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-color`, {
+  fetch(`${BASE_URL}/api/user/update-color`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -776,7 +776,7 @@ _CompleteTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -818,7 +818,7 @@ _ArchiveTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -862,7 +862,7 @@ _DeleteTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/remove?taskID=${taskID}`, {
+  fetch(`${BASE_URL}/api/user/delete-card?taskID=${taskID}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -899,7 +899,7 @@ _RemoveTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -946,7 +946,7 @@ _RestoreTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -1003,7 +1003,7 @@ _SearchTask = (status) => {
   if (term == "") {
     GET_Tasks(status);
   }
-  fetch(`${BASE_URL}/api/user/tasks/?searchTerm=${term}&status=${status}`, {
+  fetch(`${BASE_URL}/api/user/search?searchTerm=${term}&status=${status}`, {
     method: "GET",
     headers: {
       Authorization: token,

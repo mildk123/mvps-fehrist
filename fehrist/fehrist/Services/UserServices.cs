@@ -44,7 +44,7 @@ namespace fehrist.Services
             var hashFromDB = accessor.GET_UserHash(email);
             if (hashFromDB != null)
             {
-                string storedHash = hashFromDB; 
+                string storedHash = hashFromDB;
                 bool isMatch = Crypto.VerifyHashedPassword(hashFromDB, password);
 
                 if (isMatch)
@@ -100,7 +100,7 @@ namespace fehrist.Services
             {
                 // ERROR: All Data Required
                 response.status = "FAIL";
-                response.msg= "Name/Email/Password fields cannot be empty";
+                response.msg = "Name/Email/Password fields cannot be empty";
                 response.response = null;
                 return response;
             }
@@ -139,13 +139,13 @@ namespace fehrist.Services
                         case "USER":
                             RegistrationResponse userRegister = new RegistrationResponse()
                             {
-                               roleID = result.ROLEID,
-                               roleName = result.ROLE.NAME,
-                               accountID = result.ACCOUNTID,
-                               name = result.NAME,
-                               email = result.EMAIL,
-                               phone = result.PHONE,
-                               status = result.AC_STATUS
+                                roleID = result.ROLEID,
+                                roleName = result.ROLE.NAME,
+                                accountID = result.ACCOUNTID,
+                                name = result.NAME,
+                                email = result.EMAIL,
+                                phone = result.PHONE,
+                                status = result.AC_STATUS
                             };
                             var userToken = tokenObj.GetUserToken(userRegister.roleID, userRegister.roleName, userRegister.accountID, userRegister.name, userRegister.email, userRegister.phone, userRegister.status);
                             userRegister.token = userToken;
@@ -283,7 +283,7 @@ namespace fehrist.Services
                 }
             }
 
-           
+
         }
 
         public GenericResponseModel DELETE_Tasks(ClaimsIdentity identity, int taskID)
@@ -312,39 +312,39 @@ namespace fehrist.Services
             }
         }
 
-        public GenericResponseModel UPDATE_Task(ClaimsIdentity identity)
-        {
-            IEnumerable<Claim> claims = identity.Claims;
-            int accID = Int32.Parse(claims.Where(x => x.Type == "accountID").FirstOrDefault()?.Value);
+        //public GenericResponseModel UPDATE_Task(ClaimsIdentity identity)
+        //{
+        //    IEnumerable<Claim> claims = identity.Claims;
+        //    int accID = Int32.Parse(claims.Where(x => x.Type == "accountID").FirstOrDefault()?.Value);
 
-            UserAccessor accessor = new UserAccessor();
+        //    UserAccessor accessor = new UserAccessor();
 
-            var data = HttpContext.Current.Request.Form;
-            var taskID = Int32.Parse(data["TaskID"]);
-            var title = data["T_TITLE"].ToString();
-            var desc = data["T_DESC"].ToString();
-            var color = data["T_COLOR"].ToString();
-            var dueDate = data["T_DUE_DATE_TIME"].ToString();
-            var addedDate = data["T_ADDED_DATE_TIME"].ToString();
+        //    var data = HttpContext.Current.Request.Form;
+        //    var taskID = Int32.Parse(data["TaskID"]);
+        //    var title = data["T_TITLE"].ToString();
+        //    var desc = data["T_DESC"].ToString();
+        //    var color = data["T_COLOR"].ToString();
+        //    var dueDate = data["T_DUE_DATE_TIME"].ToString();
+        //    var addedDate = data["T_ADDED_DATE_TIME"].ToString();
 
-            string result = accessor.UPDATE_Task(taskID, accID, title, desc, color, dueDate);
+        //    string result = accessor.UPDATE_Task(taskID, accID, title, desc, color, dueDate);
 
-            GenericResponseModel response = new GenericResponseModel();
-            if (result != null)
-            {
-                response.status = "PASS";
-                response.msg = "Tasks Updated successfully.";
-                response.response = result;
-                return response;
-            }
-            else
-            {
-                response.status = "FAIL";
-                response.msg = "No tasks found. Please try again later.";
-                response.response = null;
-                return response;
-            }
-        }
+        //    GenericResponseModel response = new GenericResponseModel();
+        //    if (result != null)
+        //    {
+        //        response.status = "PASS";
+        //        response.msg = "Tasks Updated successfully.";
+        //        response.response = result;
+        //        return response;
+        //    }
+        //    else
+        //    {
+        //        response.status = "FAIL";
+        //        response.msg = "No tasks found. Please try again later.";
+        //        response.response = null;
+        //        return response;
+        //    }
+        //}
 
         public GenericResponseModel UPDATE_Task_Status(ClaimsIdentity identity, int taskID, string status)
         {
@@ -371,7 +371,6 @@ namespace fehrist.Services
                 return response;
             }
         }
-
 
         public GenericResponseModel UPDATE_Task_Color(ClaimsIdentity identity, int taskID, string color)
         {
@@ -407,11 +406,18 @@ namespace fehrist.Services
             UserAccessor accessor = new UserAccessor();
             List<GET_AllTasksResponse> result = accessor.SEARCH_Tasks(accID, searchTitle, status);
             ResponseModel<List<GET_AllTasksResponse>> response = new ResponseModel<List<GET_AllTasksResponse>>();
-            if (result.Count != 0)
+            if (result != null)
             {
-                response.status = "PASS";
-                response.msg = "Tasks retrieved successfully.";
-                response.response = result;
+                if (result.Count != 0)
+                {
+                    response.status = "PASS";
+                    response.msg = "Tasks retrieved successfully.";
+                    response.response = result;
+                    return response;
+                }
+                response.status = "FAIL";
+                response.msg = "No tasks found.";
+                response.response = null;
                 return response;
             }
             else

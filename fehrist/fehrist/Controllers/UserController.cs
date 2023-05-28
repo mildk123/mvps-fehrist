@@ -17,32 +17,30 @@ namespace fehrist.Controllers
     public class UserController : ApiController
     {
         [HttpPost]
-        [Route("api/user/verify-token")]
-        public string GET_TokenVerification()
+        [Route("api/token/verify")]
+        public IHttpActionResult GET_TokenVerification()
         {
             if (User.Identity.IsAuthenticated)
             {
                 var identity = User.Identity as ClaimsIdentity;
                 if (identity != null)
                 {
-                    return "valid";
+                    return Ok("valid"); // Status code 200 OK
                 }
                 else
                 {
-                    return "expired";
-
+                    return Content(HttpStatusCode.Unauthorized, "expired"); // Status code 401 Unauthorized
                 }
             }
             else
             {
-                return "invalid.";
-
+                return BadRequest("invalid"); // Status code 400 Bad Request
             }
         }
 
 
         [HttpGet]
-        [Route("api/user/get-cards")]
+        [Route("api/user/tasks")]
         public ResponseModel<List<GET_AllTasksResponse>> GET_Tasks([FromUri] string state)
         {
             if (User.Identity.IsAuthenticated)
@@ -77,7 +75,7 @@ namespace fehrist.Controllers
         }
 
         [HttpGet]
-        [Route("api/user/get-single-task")]
+        [Route("api/user/tasks")]
         public ResponseModel<GET_AllTasksResponse> GET_Task_Single([FromUri] int taskID)
         {
             if (User.Identity.IsAuthenticated)
@@ -113,7 +111,7 @@ namespace fehrist.Controllers
 
 
         [HttpPost]
-        [Route("api/user/add-card")]
+        [Route("api/user/tasks/create")]
         public GenericResponseModel SET_Task()
         {
             if (User.Identity.IsAuthenticated)
@@ -148,7 +146,7 @@ namespace fehrist.Controllers
         }
 
         [HttpGet]
-        [Route("api/user/delete-card")]
+        [Route("api/user/tasks/remove")]
         public GenericResponseModel DELETE_Tasks([FromUri] int taskID)
         {
             if (User.Identity.IsAuthenticated)
@@ -182,43 +180,43 @@ namespace fehrist.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("api/user/update-card")]
-        public GenericResponseModel UPDATE_Tasks()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                var identity = User.Identity as ClaimsIdentity;
-                if (identity != null)
-                {
-                    UserServices service = new UserServices();
-                    GenericResponseModel res = service.UPDATE_Task(identity);
-                    return res;
+        //[HttpPost]
+        //[Route("api/user/update-card")]
+        //public GenericResponseModel UPDATE_Tasks()
+        //{
+        //    if (User.Identity.IsAuthenticated)
+        //    {
+        //        var identity = User.Identity as ClaimsIdentity;
+        //        if (identity != null)
+        //        {
+        //            UserServices service = new UserServices();
+        //            GenericResponseModel res = service.UPDATE_Task(identity);
+        //            return res;
 
-                }
-                else
-                {
-                    return new GenericResponseModel
-                    {
-                        response = null,
-                        msg = "Please login with your account credentials.",
-                        status = "Redirect"
-                    };
-                }
-            }
-            else
-            {
-                return new GenericResponseModel
-                {
-                    response = null,
-                    msg = "Please login with your account credentials.",
-                    status = "Redirect"
-                };
-            }
-        }
+        //        }
+        //        else
+        //        {
+        //            return new GenericResponseModel
+        //            {
+        //                response = null,
+        //                msg = "Please login with your account credentials.",
+        //                status = "Redirect"
+        //            };
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return new GenericResponseModel
+        //        {
+        //            response = null,
+        //            msg = "Please login with your account credentials.",
+        //            status = "Redirect"
+        //        };
+        //    }
+        //}
 
         [HttpPost]
-        [Route("api/user/update-status")]
+        [Route("api/user/tasks/update-status")]
         public GenericResponseModel UPDATE_Task_Status([FromBody] UpdateTaskRequest request)
         {
             if (User.Identity.IsAuthenticated)
@@ -253,7 +251,7 @@ namespace fehrist.Controllers
         }
 
         [HttpPost]
-        [Route("api/user/update-color")]
+        [Route("api/user/tasks/update-color")]
         public GenericResponseModel UPDATE_Task_Color([FromBody] UpdateTaskColor request)
         {
             if (User.Identity.IsAuthenticated)
@@ -288,7 +286,7 @@ namespace fehrist.Controllers
 
 
         [HttpGet]
-        [Route("api/user/search")]
+        [Route("api/user/tasks/")]
         public ResponseModel<List<GET_AllTasksResponse>> SEARCH_Tasks([FromUri] string searchTerm, string status)
         {
             if (User.Identity.IsAuthenticated)

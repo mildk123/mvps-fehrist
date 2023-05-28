@@ -25,7 +25,7 @@ namespace fehrist.Controllers
         }
 
         [HttpPost]
-        [Route("api/user/login-user")]
+        [Route("api/user/login")]
         public ResponseModel<LoginResponse> Login([FromBody] LoginRequest request)
         {
             UserServices service = new UserServices();
@@ -35,7 +35,7 @@ namespace fehrist.Controllers
         }
 
         [HttpPost]
-        [Route("api/user/register-user")]
+        [Route("api/user/register")]
         public ResponseModel<RegistrationResponse> Register([FromBody] RegistrationRequest request)
         {
                 UserServices service = new UserServices();
