@@ -10,5 +10,6 @@ namespace fehrist.Models.API_Models
         public string status { get; set; }
         public string msg { get; set; }
         public string response { get; set; }
+        public int code { get; set; }
     }
 }

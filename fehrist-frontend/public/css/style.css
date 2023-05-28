@@ -1,5 +1,4 @@
 /* GLOBAL STYLES */
-
 :root {
   --primary: #11abb2;
   --primaryAlt: #0c7075;
@@ -32,6 +31,7 @@
   background-color: var(--background);
 }
 
+/* // SIDEBAR */
 #sidebar {
   background-color: var(--primary);
 }
@@ -45,58 +45,19 @@
   border-color: var(--secondary) !important;
 }
 
-/* HOME PAGE STYLE */
-.fab-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  user-select: none;
-  position: absolute;
-  bottom: 30px;
-  right: 30px;
-  cursor: pointer;
-}
-
-.fab {
-  position: relative;
-  height: 70px;
-  width: 70px;
-  background-color: var(--dark);
-  border-radius: 50%;
-  overflow: hidden;
-  z-index: 2;
-}
-.fab:hover {
-  height: 100%;
-  background-color: #0c7075;
-}
-
-.fab-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  height: 100%;
-  width: 100%;
-  border-radius: 50%;
-}
-
-.fab-content img {
-  width: 100%;
-  height: auto;
-}
+/* // Search */
 
 #searchContainer {
-  margin: 0 auto;
+  padding: 30px;
 }
-#searchContainer .inner-form .serch-field input {
-  padding-left: 55px;
-  font-size: 14px;
+#searchContainer .inner-form{
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
 }
 #searchContainer .inner-form .serch-field {
   height: 50px;
-  width: 100%;
+  /* width: 100%; */
   position: relative;
 }
 #searchContainer .inner-form .serch-field .btn-search {
@@ -106,7 +67,7 @@
   -ms-flex-align: center;
   align-items: center;
   position: absolute;
-  left: 0;
+  right: 10px;
   height: 100%;
   background: 0 0;
   border: 0;
@@ -124,14 +85,24 @@
   width: 100%;
   background: 0 0;
   border: 0;
-  background-color: var(--primary);
+  background-color: var(--primaryAlt);
   color: var(--light);
   display: block;
   width: 100%;
-  padding: 20px 32px 20px 70px;
+  padding: 20px 52px 20px 32px;
   font-size: 18px;
   border-radius: 34px;
 }
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgb(208, 208, 208);
+  opacity: 0.5; /* Firefox */
+}
+
+
+
+
+
+/* // GENERAL CARD STYLING */
 
 #cards-container {
   padding: 2.25rem 0px;
@@ -191,6 +162,44 @@
 
 
 
+/* HOME PAGE STYLE */
+.fab-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  user-select: none;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  cursor: pointer;
+}
+.fab {
+  position: relative;
+  height: 70px;
+  width: 70px;
+  background-color: var(--dark);
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 2;
+}
+.fab:hover {
+  height: 100%;
+  background-color: #0c7075;
+}
+.fab-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+}
+.fab-content img {
+  width: 100%;
+  height: auto;
+}
 
 /* ADD NEW CARD STYLE */
 #todoDesc {
@@ -221,12 +230,6 @@
 }
 
 /* PAGES STYLES */
-#completed-cards-container,
-#archived-cards-container,
-#deleted-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-}
 .isArchived,
 .isCompleted,
 .isDeleted {
@@ -265,7 +268,7 @@
   cursor: pointer;
 }
 
-/*  CARD STYLES  */
+/*  // VIEWCARD STYLES  */
 .delete-button {
   position: absolute;
   right: 30px;
@@ -349,7 +352,6 @@
   --card-brown: #e6c9a8;
   --card-grey: #e8eaed;
 }
-
 /* Color palette */
 .color-palette {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
@@ -358,7 +360,6 @@
   z-index: 999;
   width: 200px;
 }
-
 /* Stickers inside palette */
 .color-palette div {
   box-sizing: border-box;
@@ -377,7 +378,6 @@
 .color-palette div:hover {
   border-color: rgba(0, 0, 0, 0.4);
 }
-
 /* Always circle white color, otherwise it's invisible */
 .color-palette div {
   border-color: rgba(0, 0, 0, 0.251) !important;
@@ -420,4 +420,39 @@
 }
 .bg-grey {
   background-color: var(--card-grey);
+}
+
+
+
+/* // RESPONSIVENESS */
+
+/* Responsive styles */
+
+@media (max-width: 768px) {
+  #searchContainer {
+    padding: 10px;
+  }
+  #searchContainer .inner-form .serch-field input {
+    font-size: 16px;
+  }
+  #cards-container {
+    padding: 0.5rem 0px;
+  }
+} 
+
+@media (max-width: 480px) {
+  #searchContainer .inner-form .serch-field {
+    height: 40px;
+  }
+  #searchContainer .inner-form .serch-field .btn-search {
+    font-size: 22px;
+  }
+  #searchContainer .inner-form .serch-field input {
+    font-size: 12px;
+    padding: 12px 28px 12px 12px;
+    border-radius: 30px;
+  }
+  #cards-container {
+    padding: 0rem 0px;
+  }
 }

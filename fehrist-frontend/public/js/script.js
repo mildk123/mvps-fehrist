@@ -109,7 +109,7 @@ $("#SignupBtn").on("click", () => {
     return;
   }
 
-  fetch(`${BASE_URL}/api/user/register-user`, {
+  fetch(`${BASE_URL}/api/user/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -185,7 +185,7 @@ $("#LoginBtn").on("click", () => {
     });
     return;
   }
-  fetch(`${BASE_URL}/api/user/login-user`, {
+  fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json", // Adjust content type based on your API
@@ -315,8 +315,8 @@ AddTaskModal = () => {
   $("#todoColor").val(0);
   $("#todoDueDate").val("");
   $("#imageContainer").empty();
-  imageList.length = 0;
-  prevImageList = 0;
+  imageList = [];
+  prevImageList = [];
   $("#addTODOModal").modal("toggle");
 };
 // remove image from card during addition
@@ -351,7 +351,7 @@ SET_Task = () => {
     count++;
   });
 
-  fetch(`${BASE_URL}/api/user/add-card`, {
+  fetch(`${BASE_URL}/api/user/tasks/create`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -389,7 +389,7 @@ GET_Tasks = (status) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
   var container = $("#cards-container");
-  fetch(`${BASE_URL}/api/user/get-cards?state=${status}`, {
+  fetch(`${BASE_URL}/api/user/tasks?state=${status}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -397,13 +397,13 @@ GET_Tasks = (status) => {
     },
   })
     .then((result) => {
-      return result.json();
+      if (result.status == 200) return result.json();
+      else if (result.status == 401) return result.json();
     })
     .then((response) => {
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {
-        console.log(response.msg);
         container.empty();
         container.append("<h1>Oh no... so empty</h1>");
       } else if (response.status == "PASS") {
@@ -662,7 +662,7 @@ ViewTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
-  fetch(`${BASE_URL}/api/user/get-single-task?taskID=${taskID}`, {
+  fetch(`${BASE_URL}/api/user/tasks?taskID=${taskID}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -680,7 +680,7 @@ ViewTask = (taskID) => {
       } else if (response.status == "PASS") {
         var imageContainer = $("#imageContainer");
         imageContainer.empty();
-        prevImageList.length = 0;
+        prevImageList = [];
         var data = response.response;
         $("#taskID").text(data.taskID);
         $("#todoTitle").val(data.title);
@@ -735,7 +735,7 @@ _changeColor = (context, taskID) => {
   context.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor =
     colorSelected;
 
-  fetch(`${BASE_URL}/api/user/update-color`, {
+  fetch(`${BASE_URL}/api/user/tasks/update-color`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -776,7 +776,7 @@ _CompleteTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/update-status`, {
+  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -818,7 +818,7 @@ _ArchiveTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/update-status`, {
+  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -862,7 +862,7 @@ _DeleteTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/delete-card?taskID=${taskID}`, {
+  fetch(`${BASE_URL}/api/user/tasks/remove?taskID=${taskID}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -899,7 +899,7 @@ _RemoveTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/update-status`, {
+  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -946,7 +946,7 @@ _RestoreTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/update-status`, {
+  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -1003,7 +1003,7 @@ _SearchTask = (status) => {
   if (term == "") {
     GET_Tasks(status);
   }
-  fetch(`${BASE_URL}/api/user/search?searchTerm=${term}&status=${status}`, {
+  fetch(`${BASE_URL}/api/user/tasks/?searchTerm=${term}&status=${status}`, {
     method: "GET",
     headers: {
       Authorization: token,

@@ -97,7 +97,7 @@ deleteAllCookies = () => {
   }
 };
 
-function isUserAuthenticated() {
+isUserAuthenticated = () => {
   const tokenString = getCookie("FehristCookie");
   var tokenJson = JSON.parse(tokenString);
   if (tokenJson) {
@@ -107,10 +107,11 @@ function isUserAuthenticated() {
         "Content-Type": "application/json",
         Authorization: "Bearer " + tokenJson.token.data,
       },
-      body: JSON.stringify({}),
     })
       .then((res) => {
-        return res.json();
+        if (res.status == 200) return res.json();
+        else if (res.status == 400)
+          Swal.fire("Error", "Login session is invalid or expired! clear browser cache and try again  !");
       })
       .then((response) => {
         if (response == "valid") {
