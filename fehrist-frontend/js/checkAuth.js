@@ -87,6 +87,8 @@ if (location.pathname == "/pages/register.html") {
   }
 }
 
+var BASE_URL = "http://localhost:56067";
+
 deleteAllCookies = () => {
   var cookies = document.cookie.split(";");
   for (var i = 0; i < cookies.length; i++) {
