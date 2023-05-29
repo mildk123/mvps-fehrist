@@ -38,9 +38,10 @@ namespace fehrist.Controllers
             }
         }
 
+
         [HttpGet]
         [Route("api/user/tasks")]
-        public IHttpActionResult GET_Tasks([FromUri] string state)
+        public ResponseModel<List<GET_AllTasksResponse>> GET_Tasks([FromUri] string state)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -49,34 +50,33 @@ namespace fehrist.Controllers
                 {
                     UserServices service = new UserServices();
                     ResponseModel<List<GET_AllTasksResponse>> res = service.GET_Tasks(identity, state);
-                    return Ok(res); // Status code 200 OK
+                    return res;
+
                 }
                 else
                 {
-                    return Content(HttpStatusCode.Unauthorized, new ResponseModel<List<GET_AllTasksResponse>>
+                    return new ResponseModel<List<GET_AllTasksResponse>>
                     {
                         response = null,
                         msg = "Please login with your account credentials.",
-                        status = "Redirect",
-                        code = 401
-                    }); // Status code 401 Unauthorized
+                        status = "Redirect"
+                    };
                 }
             }
             else
             {
-                return Content(HttpStatusCode.Unauthorized, new ResponseModel<List<GET_AllTasksResponse>>
+                return new ResponseModel<List<GET_AllTasksResponse>>
                 {
                     response = null,
                     msg = "Please login with your account credentials.",
-                    status = "Redirect",
-                    code = 401
-                }); // Status code 401 Unauthorized
+                    status = "Redirect"
+                };
             }
         }
 
         [HttpGet]
         [Route("api/user/tasks")]
-        public IHttpActionResult GET_Task_Single([FromUri] int taskID)
+        public ResponseModel<GET_AllTasksResponse> GET_Task_Single([FromUri] int taskID)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -85,34 +85,34 @@ namespace fehrist.Controllers
                 {
                     UserServices service = new UserServices();
                     ResponseModel<GET_AllTasksResponse> res = service.GET_Task_Single(identity, taskID);
-                    return Ok(res); // Status code 200 OK
+                    return res;
+
                 }
                 else
                 {
-                    return Content(HttpStatusCode.Unauthorized, new ResponseModel<GET_AllTasksResponse>
+                    return new ResponseModel<GET_AllTasksResponse>
                     {
                         response = null,
                         msg = "Please login with your account credentials.",
-                        status = "Redirect",
-                        code = 401
-                    }); // Status code 401 Unauthorized
+                        status = "Redirect"
+                    };
                 }
             }
             else
             {
-                return Content(HttpStatusCode.Unauthorized, new ResponseModel<GET_AllTasksResponse>
+                return new ResponseModel<GET_AllTasksResponse>
                 {
                     response = null,
                     msg = "Please login with your account credentials.",
-                    status = "Redirect",
-                    code = 401
-                }); // Status code 401 Unauthorized
+                    status = "Redirect"
+                };
             }
         }
 
+
         [HttpPost]
         [Route("api/user/tasks/create")]
-        public IHttpActionResult SET_Task()
+        public GenericResponseModel SET_Task()
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -121,32 +121,33 @@ namespace fehrist.Controllers
                 {
                     UserServices service = new UserServices();
                     GenericResponseModel res = service.SET_Task(identity);
-                    return Ok(res); // Status code 200 OK
+                    return res;
+
                 }
                 else
                 {
-                    return Content(HttpStatusCode.Unauthorized, new GenericResponseModel
+                    return new GenericResponseModel
                     {
                         response = null,
                         msg = "Please login with your account credentials.",
                         status = "Redirect"
-                    }); // Status code 401 Unauthorized
+                    };
                 }
             }
             else
             {
-                return Content(HttpStatusCode.Unauthorized, new GenericResponseModel
+                return new GenericResponseModel
                 {
                     response = null,
                     msg = "Please login with your account credentials.",
                     status = "Redirect"
-                }); // Status code 401 Unauthorized
+                };
             }
         }
 
         [HttpGet]
         [Route("api/user/tasks/remove")]
-        public IHttpActionResult DELETE_Tasks([FromUri] int taskID)
+        public GenericResponseModel DELETE_Tasks([FromUri] int taskID)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -155,32 +156,68 @@ namespace fehrist.Controllers
                 {
                     UserServices service = new UserServices();
                     GenericResponseModel res = service.DELETE_Tasks(identity, taskID);
-                    return Ok(res); // Status code 200 OK
+                    return res;
+
                 }
                 else
                 {
-                    return Content(HttpStatusCode.Unauthorized, new GenericResponseModel
+                    return new GenericResponseModel
                     {
                         response = null,
                         msg = "Please login with your account credentials.",
                         status = "Redirect"
-                    }); // Status code 401 Unauthorized
+                    };
                 }
             }
             else
             {
-                return Content(HttpStatusCode.Unauthorized, new GenericResponseModel
+                return new GenericResponseModel
                 {
                     response = null,
                     msg = "Please login with your account credentials.",
                     status = "Redirect"
-                }); // Status code 401 Unauthorized
+                };
             }
         }
 
+        //[HttpPost]
+        //[Route("api/user/update-card")]
+        //public GenericResponseModel UPDATE_Tasks()
+        //{
+        //    if (User.Identity.IsAuthenticated)
+        //    {
+        //        var identity = User.Identity as ClaimsIdentity;
+        //        if (identity != null)
+        //        {
+        //            UserServices service = new UserServices();
+        //            GenericResponseModel res = service.UPDATE_Task(identity);
+        //            return res;
+
+        //        }
+        //        else
+        //        {
+        //            return new GenericResponseModel
+        //            {
+        //                response = null,
+        //                msg = "Please login with your account credentials.",
+        //                status = "Redirect"
+        //            };
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return new GenericResponseModel
+        //        {
+        //            response = null,
+        //            msg = "Please login with your account credentials.",
+        //            status = "Redirect"
+        //        };
+        //    }
+        //}
+
         [HttpPost]
         [Route("api/user/tasks/update-status")]
-        public IHttpActionResult UPDATE_Task_Status([FromBody] UpdateTaskRequest request)
+        public GenericResponseModel UPDATE_Task_Status([FromBody] UpdateTaskRequest request)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -189,33 +226,33 @@ namespace fehrist.Controllers
                 {
                     UserServices service = new UserServices();
                     GenericResponseModel res = service.UPDATE_Task_Status(identity, request.taskID, request.status);
-                    return Ok(res); // Status code 200 OK
+                    return res;
+
                 }
                 else
                 {
-                    return Content(HttpStatusCode.Unauthorized, new GenericResponseModel
+                    return new GenericResponseModel
                     {
                         response = null,
                         msg = "Please login with your account credentials.",
                         status = "Redirect"
-                    }); // Status code 401 Unauthorized
+                    };
                 }
             }
             else
             {
-                return Content(HttpStatusCode.Unauthorized, new GenericResponseModel
+                return new GenericResponseModel
                 {
                     response = null,
                     msg = "Please login with your account credentials.",
                     status = "Redirect"
-                }); // Status code 401 Unauthorized
+                };
             }
         }
 
-
         [HttpPost]
         [Route("api/user/tasks/update-color")]
-        public IHttpActionResult UPDATE_Task_Color([FromBody] UpdateTaskColor request)
+        public GenericResponseModel UPDATE_Task_Color([FromBody] UpdateTaskColor request)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -224,32 +261,33 @@ namespace fehrist.Controllers
                 {
                     UserServices service = new UserServices();
                     GenericResponseModel res = service.UPDATE_Task_Color(identity, request.taskID, request.color);
-                    return Ok(res); // Status code 200 OK
+                    return res;
                 }
                 else
                 {
-                    return Content(HttpStatusCode.Unauthorized, new GenericResponseModel
+                    return new GenericResponseModel
                     {
                         response = null,
                         msg = "Please login with your account credentials.",
                         status = "Redirect"
-                    }); // Status code 401 Unauthorized
+                    };
                 }
             }
             else
             {
-                return Content(HttpStatusCode.Unauthorized, new GenericResponseModel
+                return new GenericResponseModel
                 {
                     response = null,
                     msg = "Please login with your account credentials.",
                     status = "Redirect"
-                }); // Status code 401 Unauthorized
+                };
             }
         }
 
+
         [HttpGet]
         [Route("api/user/tasks/")]
-        public IHttpActionResult SEARCH_Tasks([FromUri] string searchTerm, string status)
+        public ResponseModel<List<GET_AllTasksResponse>> SEARCH_Tasks([FromUri] string searchTerm, string status)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -258,26 +296,27 @@ namespace fehrist.Controllers
                 {
                     UserServices service = new UserServices();
                     ResponseModel<List<GET_AllTasksResponse>> res = service.SEARCH_Tasks(identity, searchTerm, status);
-                    return Ok(res); // Status code 200 OK
+                    return res;
+
                 }
                 else
                 {
-                    return Content(HttpStatusCode.Unauthorized, new ResponseModel<List<GET_AllTasksResponse>>
+                    return new ResponseModel<List<GET_AllTasksResponse>>
                     {
                         response = null,
                         msg = "Please login with your account credentials.",
                         status = "Redirect"
-                    }); // Status code 401 Unauthorized
+                    };
                 }
             }
             else
             {
-                return Content(HttpStatusCode.Unauthorized, new ResponseModel<List<GET_AllTasksResponse>>
+                return new ResponseModel<List<GET_AllTasksResponse>>
                 {
                     response = null,
                     msg = "Please login with your account credentials.",
                     status = "Redirect"
-                }); // Status code 401 Unauthorized
+                };
             }
         }
 

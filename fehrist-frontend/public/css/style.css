@@ -1,4 +1,5 @@
 /* GLOBAL STYLES */
+
 :root {
   --primary: #11abb2;
   --primaryAlt: #0c7075;
@@ -31,7 +32,6 @@
   background-color: var(--background);
 }
 
-/* // SIDEBAR */
 #sidebar {
   background-color: var(--primary);
 }
@@ -45,19 +45,58 @@
   border-color: var(--secondary) !important;
 }
 
-/* // Search */
+/* HOME PAGE STYLE */
+.fab-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  user-select: none;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  cursor: pointer;
+}
+
+.fab {
+  position: relative;
+  height: 70px;
+  width: 70px;
+  background-color: var(--dark);
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 2;
+}
+.fab:hover {
+  height: 100%;
+  background-color: #0c7075;
+}
+
+.fab-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+}
+
+.fab-content img {
+  width: 100%;
+  height: auto;
+}
 
 #searchContainer {
-  padding: 30px;
-}
-#searchContainer .inner-form {
-  display: flex;
-  justify-content: center;
   margin: 0 auto;
+}
+#searchContainer .inner-form .serch-field input {
+  padding-left: 55px;
+  font-size: 14px;
 }
 #searchContainer .inner-form .serch-field {
   height: 50px;
-  /* width: 100%; */
+  width: 100%;
   position: relative;
 }
 #searchContainer .inner-form .serch-field .btn-search {
@@ -67,7 +106,7 @@
   -ms-flex-align: center;
   align-items: center;
   position: absolute;
-  right: 10px;
+  left: 0;
   height: 100%;
   background: 0 0;
   border: 0;
@@ -85,21 +124,14 @@
   width: 100%;
   background: 0 0;
   border: 0;
-  background-color: var(--primaryAlt);
+  background-color: var(--primary);
   color: var(--light);
   display: block;
   width: 100%;
-  padding: 20px 52px 20px 32px;
+  padding: 20px 32px 20px 70px;
   font-size: 18px;
   border-radius: 34px;
 }
-::placeholder {
-  /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: rgb(208, 208, 208);
-  opacity: 0.5; /* Firefox */
-}
-
-/* // GENERAL CARD STYLING */
 
 #cards-container {
   padding: 2.25rem 0px;
@@ -108,7 +140,7 @@
   justify-content: space-around;
 }
 .card-todo {
-  border-radius: 10px;
+  border-radius: 25px;
   max-height: 520px;
   height: fit-content;
   margin: 5px;
@@ -118,7 +150,7 @@
 }
 .card-body {
   overflow: hidden; /* Optional: Hide overflowing content */
-  padding: 15px 0px;
+  padding: 10px;
 }
 
 .card-details-container {
@@ -127,18 +159,14 @@
 }
 .card-heading {
   font-size: 16px;
-  margin: 5px;
   font-weight: bold;
-  color: black;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0px;
 }
 .card-desc {
-  margin: 5px;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   font-size: 12px;
-  color: black;
   text-overflow: ellipsis;
   overflow: hidden;
 }
@@ -155,62 +183,14 @@
   padding: 5px;
   margin: 5px;
   cursor: pointer;
-  font-size: 20px;
-  font-weight: bolder;
-  color: black;
 }
 .todo-action i {
   font-size: 22px;
   color: var(--dark);
 }
 
-/* HOME PAGE STYLE */
-.fab-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  user-select: none;
-  position: absolute;
-  bottom: 30px;
-  right: 30px;
-  cursor: pointer;
-}
-.fab {
-  position: relative;
-  height: 70px;
-  width: 70px;
-  background-color: var(--dark);
-  border-radius: 50%;
-  overflow: hidden;
-  z-index: 2;
-}
-.fab:hover {
-  height: 100%;
-  background-color: #0c7075;
-}
-.fab-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  height: 100%;
-  width: 100%;
-  border-radius: 50%;
-}
-.fab-content img {
-  width: 100%;
-  height: auto;
-}
 
-/* //  ABOUT PAGE STYLe */
-#about-container {
-  margin: 50px;
-  padding: 25px;
-  border-radius: 25px;
-  text-align: center;
-  background-color: var(--card-white);
-}
+
 
 /* ADD NEW CARD STYLE */
 #todoDesc {
@@ -241,6 +221,12 @@
 }
 
 /* PAGES STYLES */
+#completed-cards-container,
+#archived-cards-container,
+#deleted-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+}
 .isArchived,
 .isCompleted,
 .isDeleted {
@@ -279,7 +265,7 @@
   cursor: pointer;
 }
 
-/*  // VIEWCARD STYLES  */
+/*  CARD STYLES  */
 .delete-button {
   position: absolute;
   right: 30px;
@@ -350,7 +336,7 @@
 /* COLOR SELECTION FOR CARD */
 
 :root {
-  --card-white: #ffffff;
+  --card-white: #FFFFFF;
   --card-red: #f28b82;
   --card-orange: #fbbc04;
   --card-yellow: #fff475;
@@ -363,6 +349,7 @@
   --card-brown: #e6c9a8;
   --card-grey: #e8eaed;
 }
+
 /* Color palette */
 .color-palette {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
@@ -371,6 +358,7 @@
   z-index: 999;
   width: 200px;
 }
+
 /* Stickers inside palette */
 .color-palette div {
   box-sizing: border-box;
@@ -389,10 +377,12 @@
 .color-palette div:hover {
   border-color: rgba(0, 0, 0, 0.4);
 }
+
 /* Always circle white color, otherwise it's invisible */
 .color-palette div {
   border-color: rgba(0, 0, 0, 0.251) !important;
 }
+
 
 /* Background colors */
 .bg-white {
@@ -430,50 +420,4 @@
 }
 .bg-grey {
   background-color: var(--card-grey);
-}
-
-/* // RESPONSIVENESS */
-
-/* Responsive styles */
-
-@media (max-width: 768px) {
-  #searchContainer {
-    padding: 10px;
-  }
-  #searchContainer .inner-form .serch-field input {
-    font-size: 16px;
-  }
-  #cards-container {
-    padding: 0.5rem 0px;
-  }
-  #about-container {
-    margin: 25px;
-    padding: 15px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  #searchContainer .inner-form .serch-field {
-    height: 40px;
-  }
-  #searchContainer .inner-form .serch-field .btn-search {
-    font-size: 22px;
-  }
-  #searchContainer .inner-form .serch-field input {
-    font-size: 12px;
-    padding: 12px 28px 12px 12px;
-    border-radius: 30px;
-  }
-  #cards-container {
-    padding: 0rem 0px;
-  }
-  #about-container {
-    margin: 15px;
-    padding: 5px;
-    font-size: 12px;
-  }
-  #about-container h1 {
-    font-size: 33px;
-  }
 }

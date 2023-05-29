@@ -1,3 +1,5 @@
+$("#LoadingIcon").css("display", "none");
+
 // ADD IMAGE TO NEW TASK
 window.addEventListener("load", (event) => {
   if (location.pathname == "/" || location.pathname == "/index.html") {
@@ -59,7 +61,7 @@ window.addEventListener("load", (event) => {
   }
 });
 
-var BASE_URL = "http://localhost:56067";
+var BASE_URL = "https://fehrist.somee.com";
 
 function isValidEmail(email) {
   // Regular expression to validate email format
@@ -109,7 +111,14 @@ $("#SignupBtn").on("click", () => {
     return;
   }
 
+<<<<<<< Updated upstream
+  fetch(`${BASE_URL}/api/user/register-user`, {
+=======
+  $("#LoadingIcon").css("display", "block");
+  $("#SignupBtn").css("display", "none");
+
   fetch(`${BASE_URL}/api/user/register`, {
+>>>>>>> Stashed changes
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -160,6 +169,10 @@ $("#SignupBtn").on("click", () => {
         text: "Unable to reach server at the moment. Please check your internet connection!",
         footer: err.message,
       });
+    })
+    .finally(() => {
+      $("#LoadingIcon").css("display", "none");
+      $("#SignupBtn").css("display", "block");
     });
 });
 
@@ -185,7 +198,15 @@ $("#LoginBtn").on("click", () => {
     });
     return;
   }
+<<<<<<< Updated upstream
+  fetch(`${BASE_URL}/api/user/login-user`, {
+=======
+
+  $("#LoadingIcon").css("display", "block");
+  $("#LoginBtn").css("display", "none");
+
   fetch(`${BASE_URL}/api/user/login`, {
+>>>>>>> Stashed changes
     method: "POST",
     headers: {
       "Content-Type": "application/json", // Adjust content type based on your API
@@ -233,6 +254,10 @@ $("#LoginBtn").on("click", () => {
         text: "Unable to reach server at the moment. Please check your internet connection!",
         footer: err.message,
       });
+    })
+    .finally(() => {
+      $("#LoadingIcon").css("display", "none");
+      $("#LoginBtn").css("display", "block");
     });
 });
 
@@ -280,6 +305,7 @@ $("#todoImage").on("change", function () {
   }
 });
 $("#AddTaskBtn").on("click", () => {
+  $("#LoadingIcon").css("display", "block");
   SET_Task();
 });
 $("#FABBtn").on("click", () => {
@@ -315,8 +341,8 @@ AddTaskModal = () => {
   $("#todoColor").val(0);
   $("#todoDueDate").val("");
   $("#imageContainer").empty();
-  imageList = [];
-  prevImageList = [];
+  imageList.length = 0;
+  prevImageList = 0;
   $("#addTODOModal").modal("toggle");
 };
 // remove image from card during addition
@@ -351,7 +377,7 @@ SET_Task = () => {
     count++;
   });
 
-  fetch(`${BASE_URL}/api/user/tasks/create`, {
+  fetch(`${BASE_URL}/api/user/add-card`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -381,6 +407,9 @@ SET_Task = () => {
         text: "Unable to reach server at the moment. Please check your internet connection!",
         footer: err.message,
       });
+    })
+    .finally( () => {
+      $("#LoadingIcon").css("display", "none");
     });
 };
 
@@ -389,7 +418,7 @@ GET_Tasks = (status) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
   var container = $("#cards-container");
-  fetch(`${BASE_URL}/api/user/tasks?state=${status}`, {
+  fetch(`${BASE_URL}/api/user/get-cards?state=${status}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -397,13 +426,13 @@ GET_Tasks = (status) => {
     },
   })
     .then((result) => {
-      if (result.status == 200) return result.json();
-      else if (result.status == 401) return result.json();
+      return result.json();
     })
     .then((response) => {
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {
+        console.log(response.msg);
         container.empty();
         container.append("<h1>Oh no... so empty</h1>");
       } else if (response.status == "PASS") {
@@ -662,7 +691,7 @@ ViewTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
-  fetch(`${BASE_URL}/api/user/tasks?taskID=${taskID}`, {
+  fetch(`${BASE_URL}/api/user/get-single-task?taskID=${taskID}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -680,7 +709,7 @@ ViewTask = (taskID) => {
       } else if (response.status == "PASS") {
         var imageContainer = $("#imageContainer");
         imageContainer.empty();
-        prevImageList = [];
+        prevImageList.length = 0;
         var data = response.response;
         $("#taskID").text(data.taskID);
         $("#todoTitle").val(data.title);
@@ -735,7 +764,7 @@ _changeColor = (context, taskID) => {
   context.parentElement.parentElement.parentElement.parentElement.parentElement.style.backgroundColor =
     colorSelected;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-color`, {
+  fetch(`${BASE_URL}/api/user/update-color`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -776,7 +805,7 @@ _CompleteTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -818,7 +847,7 @@ _ArchiveTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -862,7 +891,7 @@ _DeleteTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/remove?taskID=${taskID}`, {
+  fetch(`${BASE_URL}/api/user/delete-card?taskID=${taskID}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -899,7 +928,7 @@ _RemoveTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -946,7 +975,7 @@ _RestoreTask = (taskID) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
 
-  fetch(`${BASE_URL}/api/user/tasks/update-status`, {
+  fetch(`${BASE_URL}/api/user/update-status`, {
     method: "POST",
     headers: {
       Authorization: token,
@@ -1000,12 +1029,17 @@ _SearchTask = (status) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
   var container = $("#cards-container");
-  debugger
+<<<<<<< Updated upstream
   if (term == "") {
     GET_Tasks(status);
-    return
+=======
+  debugger;
+  if (term == "") {
+    GET_Tasks(status);
+    return;
+>>>>>>> Stashed changes
   }
-  fetch(`${BASE_URL}/api/user/tasks/?searchTerm=${term}&status=${status}`, {
+  fetch(`${BASE_URL}/api/user/search?searchTerm=${term}&status=${status}`, {
     method: "GET",
     headers: {
       Authorization: token,
@@ -1016,6 +1050,7 @@ _SearchTask = (status) => {
       return result.json();
     })
     .then((response) => {
+      debugger;
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {

@@ -107,10 +107,12 @@ isUserAuthenticated = () => {
         "Content-Type": "application/json",
         Authorization: "Bearer " + tokenJson.token.data,
       },
+      body: JSON.stringify({}),
     })
       .then((res) => {
         if (res.status == 200) return res.json();
         else if (res.status == 400)
+        clearAllCookies();
           Swal.fire("Error", "Login session is invalid or expired! clear browser cache and try again  !");
       })
       .then((response) => {
@@ -143,3 +145,13 @@ function getCookie(name) {
   }
   return null;
 }
+
+clearAllCookies = () => {
+  var cookies = document.cookie.split(";");
+  for (var i = 0; i < cookies.length; i++) {
+    var cookie = cookies[i];
+    var pos = cookie.indexOf("=");
+    var name = pos > -1 ? cookie.substr(0, pos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+  }
+};

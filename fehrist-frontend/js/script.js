@@ -1,3 +1,5 @@
+$("#LoadingIcon").css("display", "none");
+
 // ADD IMAGE TO NEW TASK
 window.addEventListener("load", (event) => {
   if (location.pathname == "/" || location.pathname == "/index.html") {
@@ -109,6 +111,9 @@ $("#SignupBtn").on("click", () => {
     return;
   }
 
+  $("#LoadingIcon").css("display", "block");
+  $("#SignupBtn").css("display", "none");
+
   fetch(`${BASE_URL}/api/user/register`, {
     method: "POST",
     headers: {
@@ -160,6 +165,10 @@ $("#SignupBtn").on("click", () => {
         text: "Unable to reach server at the moment. Please check your internet connection!",
         footer: err.message,
       });
+    })
+    .finally(() => {
+      $("#LoadingIcon").css("display", "none");
+      $("#SignupBtn").css("display", "block");
     });
 });
 
@@ -185,6 +194,10 @@ $("#LoginBtn").on("click", () => {
     });
     return;
   }
+
+  $("#LoadingIcon").css("display", "block");
+  $("#LoginBtn").css("display", "none");
+
   fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
     headers: {
@@ -233,6 +246,10 @@ $("#LoginBtn").on("click", () => {
         text: "Unable to reach server at the moment. Please check your internet connection!",
         footer: err.message,
       });
+    })
+    .finally(() => {
+      $("#LoadingIcon").css("display", "none");
+      $("#LoginBtn").css("display", "block");
     });
 });
 
@@ -280,6 +297,7 @@ $("#todoImage").on("change", function () {
   }
 });
 $("#AddTaskBtn").on("click", () => {
+  $("#LoadingIcon").css("display", "block");
   SET_Task();
 });
 $("#FABBtn").on("click", () => {
@@ -381,10 +399,14 @@ SET_Task = () => {
         text: "Unable to reach server at the moment. Please check your internet connection!",
         footer: err.message,
       });
+    })
+    .finally( () => {
+      $("#LoadingIcon").css("display", "none");
     });
 };
 
 GET_Tasks = (status) => {
+  debugger;
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
@@ -397,13 +419,13 @@ GET_Tasks = (status) => {
     },
   })
     .then((result) => {
-      if (result.status == 200) return result.json();
-      else if (result.status == 401) return result.json();
+      return result.json();
     })
     .then((response) => {
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {
+        console.log(response.msg);
         container.empty();
         container.append("<h1>Oh no... so empty</h1>");
       } else if (response.status == "PASS") {
@@ -1000,10 +1022,10 @@ _SearchTask = (status) => {
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
   var container = $("#cards-container");
-  debugger
+  debugger;
   if (term == "") {
     GET_Tasks(status);
-    return
+    return;
   }
   fetch(`${BASE_URL}/api/user/tasks/?searchTerm=${term}&status=${status}`, {
     method: "GET",
@@ -1016,6 +1038,7 @@ _SearchTask = (status) => {
       return result.json();
     })
     .then((response) => {
+      debugger;
       if (response.status == "Redirect")
         window.location.pathname = "/pages/login.html";
       else if (response.status == "FAIL") {

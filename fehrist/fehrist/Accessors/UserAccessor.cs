@@ -45,10 +45,6 @@ namespace fehrist.Accessors
                 };
                 DB.ACCOUNTS.Add(newAcc);
                 DB.SaveChanges();
-                newAcc.CREATED_BY = newAcc.ACCOUNTID.ToString();
-                newAcc.DATE_CREATED = DateTime.Now;
-                DB.SaveChanges();
-
                 return newAcc;
             }
             catch (DbUpdateException)
@@ -74,8 +70,9 @@ namespace fehrist.Accessors
                     return null;
                 }
             }
-            catch (Exception)
+            catch (Exception e) 
             {
+                Console.Write(e);
                 return null;
             }
         }
@@ -196,9 +193,7 @@ namespace fehrist.Accessors
                     T_COLOR = color,
                     T_ADDED_DATE_TIME = addedDate,
                     T_DUE_DATE_TIME = dueDate,
-                    T_STATUS = status.ToUpper(),
-                    CREATED_BY = accID.ToString(),
-                    DATE_CREATED = DateTime.Now
+                    T_STATUS = status.ToUpper()
                 };
                 DB.TASKS.Add(newTask);
                 DB.SaveChanges();
@@ -218,9 +213,7 @@ namespace fehrist.Accessors
                         TASK_IMAGES newImage = new TASK_IMAGES()
                         {
                             TASKID = newTask.TASKID,
-                            TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null,
-                            CREATED_BY = newTask.ACCOUNTID.ToString(),
-                            DATE_CREATED = DateTime.Now
+                            TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null
                         };
                         DB.TASK_IMAGES.Add(newImage);
                         DB.SaveChanges();
@@ -238,8 +231,6 @@ namespace fehrist.Accessors
                     updateTask.T_TITLE = title;
                     updateTask.T_DESC = desc;
                     updateTask.T_DUE_DATE_TIME = dueDate;
-                    updateTask.UPDATE_BY = accID.ToString();
-                    updateTask.DATE_UPDATED = DateTime.Now;
                     updateTask.TASK_IMAGES.Clear();
                     for (int i = 0; i < filesList.Count; i++)
                     {
@@ -257,9 +248,7 @@ namespace fehrist.Accessors
                             TASK_IMAGES newImage = new TASK_IMAGES()
                             {
                                 TASKID = updateTask.TASKID,
-                                TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null,
-                                CREATED_BY = updateTask.ACCOUNTID.ToString(),
-                                DATE_CREATED = DateTime.Now
+                                TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null
                             };
                             DB.TASK_IMAGES.Add(newImage);
 
@@ -288,8 +277,6 @@ namespace fehrist.Accessors
                 updateTask.T_TITLE = title;
                 updateTask.T_DESC = desc;
                 updateTask.T_DUE_DATE_TIME = dueDate;
-                updateTask.CREATED_BY = accID.ToString();
-                updateTask.DATE_CREATED = DateTime.Now;
                 updateTask.TASK_IMAGES.Clear();
                 DB.SaveChanges();
 
@@ -311,10 +298,8 @@ namespace fehrist.Accessors
                         TASK_IMAGES newImage = new TASK_IMAGES()
                         {
                             TASKID = updateTask.TASKID,
-                            TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null,
-                            CREATED_BY = accID.ToString(),
-                            DATE_CREATED = DateTime.Now
-                    };
+                            TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null
+                        };
                         DB.TASK_IMAGES.Add(newImage);
 
                     }
@@ -330,8 +315,6 @@ namespace fehrist.Accessors
                         if (instanceFound != null)
                         {
                             instanceFound.TASKID = taskID;
-                            instanceFound.DATE_UPDATED = DateTime.Now;
-                            instanceFound.UPDATE_BY = updateTask.ACCOUNTID.ToString();
                         }
                         //DB.SaveChanges();
                     }
@@ -377,6 +360,32 @@ namespace fehrist.Accessors
             }
         }
 
+        //public string UPDATE_Task(int taskID, int accID, string title, string desc, string color, string dueDate)
+        //{
+        //    try
+        //    {
+        //        var taskSelected = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
+        //        if (taskSelected != null)
+        //        {
+        //            taskSelected.T_TITLE = title;
+        //            taskSelected.T_DESC = desc;
+        //            taskSelected.T_COLOR = color;
+        //            taskSelected.T_DUE_DATE_TIME = dueDate;
+        //            DB.SaveChanges();
+
+        //            return "Task updated succuessfully.";
+        //        }
+        //        else
+        //        {
+        //            return "The selected task does not exists anymore.";
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return "An error occured while updating current task. Please login again refresh the caches.";
+        //    }
+        //}
+
         public string UPDATE_Task_Status(int taskID, int accID, string status)
         {
             try
@@ -385,8 +394,6 @@ namespace fehrist.Accessors
                 if (taskSelected != null)
                 {
                     taskSelected.T_STATUS = status.ToUpper();
-                    taskSelected.UPDATE_BY = accID.ToString();
-                    taskSelected.DATE_UPDATED = DateTime.Now;
                     DB.SaveChanges();
                     return "Sucessfully chaned status of task";
                 }
@@ -410,8 +417,6 @@ namespace fehrist.Accessors
                 if (taskSelected != null)
                 {
                     taskSelected.T_COLOR = color.ToUpper();
-                    taskSelected.UPDATE_BY = accID.ToString();
-                    taskSelected.DATE_UPDATED = DateTime.Now;
                     DB.SaveChanges();
                     return "Sucessfully changed color of task";
                 }
@@ -433,11 +438,10 @@ namespace fehrist.Accessors
             var statusUpper = status.ToUpper();
 
             var allTasks = DB.TASKS.Where(x => x.ACCOUNTID == accID &&
-            (x.T_STATUS == statusUpper &&
-            x.T_TITLE.Contains(termLower)) ||
-            (x.T_STATUS == statusUpper &&
-            x.T_DESC.Contains(termLower))
-            ).ToList();
+    ((x.T_STATUS == statusUpper && x.T_TITLE.Contains(termLower)) ||
+    (x.T_STATUS == statusUpper && x.T_DESC.Contains(termLower))) &&
+    x.ACCOUNTID == accID
+).ToList();
             if (allTasks.Count != 0)
             {
                 List<GET_AllTasksResponse> taskList = new List<GET_AllTasksResponse>();

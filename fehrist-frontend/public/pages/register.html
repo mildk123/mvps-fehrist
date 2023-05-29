@@ -10,6 +10,7 @@
       href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900"
       rel="stylesheet"
     />
+    
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js"></script>
     <link
@@ -33,7 +34,7 @@
             <h2 class="form-title">Sign up</h2>
             <form method="POST" class="register-form" id="register-form">
               <div class="form-group">
-                <label 
+                <label for="RegNameBox"
                   ><i class="fa fa-user"
                     ><span style="color: red"> *</span></i
                   ></label
@@ -46,7 +47,7 @@
                 />
               </div>
               <div class="form-group">
-                <label 
+                <label for="RegEmailBox"
                   ><i class="fa fa-envelope-o"
                     ><span style="color: red"> *</span></i
                   ></label
@@ -59,7 +60,7 @@
                 />
               </div>
               <div class="form-group">
-                <label 
+                <label for="RegPassBox"
                   ><i class="fa fa-lock"
                     ><span style="color: red"> *</span></i
                   ></label
@@ -72,7 +73,7 @@
                 />
               </div>
               <div class="form-group">
-                <label
+                <label for="RegRePassBox"
                   ><i class="fa fa-lock"
                     ><span style="color: red"> *</span></i
                   ></label
@@ -85,11 +86,12 @@
                 />
               </div>
               <div class="form-group">
-                <label  class="label-agree-term"
+                <label for="agree-term" class="label-agree-term"
                   >By registering you agree all statements Terms of
                   services</label
                 >
               </div>
+              
               <div class="form-group form-button">
                 <input
                   type="button"
@@ -97,7 +99,8 @@
                   id="SignupBtn"
                   class="form-submit"
                   value="Register"
-                />
+                  />
+                  <i class="fa fa-spinner fa-2x" id="LoadingIcon" ></i>
               </div>
             </form>
             <div class="social-login">
@@ -128,7 +131,7 @@
               <img src="../images/signup-image.jpg" />
             </figure>
             <a href="../pages/login.html" class="signup-image-link"
-              >I am already member</a
+              >Already have an account</a
             >
           </div>
         </div>

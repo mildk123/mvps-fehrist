@@ -27,7 +27,6 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "Email/Password fields cannot be empty";
                 response.response = null;
-                response.code = 400;
                 return response;
             }
 
@@ -36,7 +35,6 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "Invalid email format";
                 response.response = null;
-                response.code = 400;
                 return response;
             }
 
@@ -53,8 +51,7 @@ namespace fehrist.Services
                 {
                     var result = accessor.Get_UserAccount(email);
                     response.status = "PASS";
-                    response.msg = "Login Success";
-                    response.code = 200;
+                    response.msg = "Login Succes.";
                     token_handler tokenObj = new token_handler();
                     switch (result.ROLE.NAME)
                     {
@@ -81,7 +78,6 @@ namespace fehrist.Services
                 {
                     response.status = "FAIL";
                     response.msg = "Invalid Email/Password. Please try again.";
-                    response.code = 400;
                     response.response = null;
                     return response;
                 }
@@ -91,7 +87,6 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "Email address not found. Please try again.";
                 response.response = null;
-                response.code = 404;
                 return response;
             }
         }
@@ -107,7 +102,6 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "Name/Email/Password fields cannot be empty";
                 response.response = null;
-                response.code = 400; // Bad Request
                 return response;
             }
 
@@ -116,7 +110,6 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "Invalid email format";
                 response.response = null;
-                response.code = 400; // Bad Request
                 return response;
             }
 
@@ -125,7 +118,6 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "Invalid password. It should have at least 8 characters and contain a combination of letters, digits, and special characters @$!%*#?&.";
                 response.response = null;
-                response.code = 400; // Bad Request
                 return response;
             }
 
@@ -140,7 +132,7 @@ namespace fehrist.Services
                 if (result != null)
                 {
                     response.status = "PASS";
-                    response.msg = "Account Registered Successfully.";
+                    response.msg = "Account Registered Succesfully.";
                     token_handler tokenObj = new token_handler();
                     switch (result.ROLE.NAME)
                     {
@@ -158,7 +150,6 @@ namespace fehrist.Services
                             var userToken = tokenObj.GetUserToken(userRegister.roleID, userRegister.roleName, userRegister.accountID, userRegister.name, userRegister.email, userRegister.phone, userRegister.status);
                             userRegister.token = userToken;
                             response.response = userRegister;
-                            response.code = 201; // Success
                             return response;
                         default:
                             return null;
@@ -169,7 +160,6 @@ namespace fehrist.Services
                     response.status = "FAIL";
                     response.msg = "Email already exists. Please login using your email.";
                     response.response = null;
-                    response.code = 409; // Conflict
                     return response;
                 }
             }
@@ -178,7 +168,6 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "Invalid Role ID. Please try again later.";
                 response.response = null;
-                response.code = 400; // Internal Server Error
                 return response;
             }
         }
@@ -191,13 +180,11 @@ namespace fehrist.Services
             UserAccessor accessor = new UserAccessor();
             List<GET_AllTasksResponse> result = accessor.GET_Tasks(accID, state);
             ResponseModel<List<GET_AllTasksResponse>> response = new ResponseModel<List<GET_AllTasksResponse>>();
-
             if (result.Count != 0)
             {
                 response.status = "PASS";
                 response.msg = "Tasks retrieved successfully.";
                 response.response = result;
-                response.code = 200; // OK
                 return response;
             }
             else
@@ -205,11 +192,9 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "No tasks found. Please try again later.";
                 response.response = null;
-                response.code = 404; // Not Found
                 return response;
             }
         }
-
 
         public ResponseModel<GET_AllTasksResponse> GET_Task_Single(ClaimsIdentity identity, int taskID)
         {
@@ -219,13 +204,11 @@ namespace fehrist.Services
             UserAccessor accessor = new UserAccessor();
             GET_AllTasksResponse result = accessor.GET_Task_Single(accID, taskID);
             ResponseModel<GET_AllTasksResponse> response = new ResponseModel<GET_AllTasksResponse>();
-
             if (result != null)
             {
                 response.status = "PASS";
                 response.msg = "Task retrieved successfully.";
                 response.response = result;
-                response.code = 200; // OK
                 return response;
             }
             else
@@ -233,11 +216,9 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "No task found. Please try again.";
                 response.response = null;
-                response.code = 404; // Not Found
                 return response;
             }
         }
-
 
         public GenericResponseModel SET_Task(ClaimsIdentity identity)
         {
@@ -251,6 +232,7 @@ namespace fehrist.Services
             for (int i = 0; i < HttpContext.Current.Request.Files.Count; i++)
             {
                 filesList.Add(HttpContext.Current.Request.Files[i]);
+
             }
 
             var taskID = data["T_TASKID"] != "new" ? Int32.Parse(data["T_TASKID"]) : 0;
@@ -266,21 +248,18 @@ namespace fehrist.Services
             {
                 string result = accessor.UPDATE_TaskImage(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList, prevImages);
                 GenericResponseModel response = new GenericResponseModel();
-
                 if (result != null)
                 {
                     response.status = "PASS";
                     response.msg = "Tasks added successfully.";
                     response.response = result;
-                    response.code = 201; // OK
                     return response;
                 }
                 else
                 {
                     response.status = "FAIL";
-                    response.msg = "task not found. Please try again later.";
+                    response.msg = "No tasks found. Please try again later.";
                     response.response = null;
-                    response.code = 404; // Internal Server Error
                     return response;
                 }
             }
@@ -288,24 +267,23 @@ namespace fehrist.Services
             {
                 string result = accessor.SET_Task(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList);
                 GenericResponseModel response = new GenericResponseModel();
-
                 if (result != null)
                 {
                     response.status = "PASS";
                     response.msg = "Tasks added successfully.";
                     response.response = result;
-                    response.code = 201; // OK
                     return response;
                 }
                 else
                 {
                     response.status = "FAIL";
-                    response.msg = "No task found. Please try again later.";
+                    response.msg = "No tasks found. Please try again later.";
                     response.response = null;
-                    response.code = 404; // Internal Server Error
                     return response;
                 }
             }
+
+
         }
 
         public GenericResponseModel DELETE_Tasks(ClaimsIdentity identity, int taskID)
@@ -323,18 +301,50 @@ namespace fehrist.Services
                 response.status = "PASS";
                 response.msg = result;
                 response.response = result;
-                response.code = 200; // OK
                 return response;
             }
             else
             {
                 response.status = "FAIL";
-                response.msg = "Task not found. Please try again later.";
+                response.msg = "No tasks found. Please try again later.";
                 response.response = null;
-                response.code = 404; // Internal Server Error
                 return response;
             }
         }
+
+        //public GenericResponseModel UPDATE_Task(ClaimsIdentity identity)
+        //{
+        //    IEnumerable<Claim> claims = identity.Claims;
+        //    int accID = Int32.Parse(claims.Where(x => x.Type == "accountID").FirstOrDefault()?.Value);
+
+        //    UserAccessor accessor = new UserAccessor();
+
+        //    var data = HttpContext.Current.Request.Form;
+        //    var taskID = Int32.Parse(data["TaskID"]);
+        //    var title = data["T_TITLE"].ToString();
+        //    var desc = data["T_DESC"].ToString();
+        //    var color = data["T_COLOR"].ToString();
+        //    var dueDate = data["T_DUE_DATE_TIME"].ToString();
+        //    var addedDate = data["T_ADDED_DATE_TIME"].ToString();
+
+        //    string result = accessor.UPDATE_Task(taskID, accID, title, desc, color, dueDate);
+
+        //    GenericResponseModel response = new GenericResponseModel();
+        //    if (result != null)
+        //    {
+        //        response.status = "PASS";
+        //        response.msg = "Tasks Updated successfully.";
+        //        response.response = result;
+        //        return response;
+        //    }
+        //    else
+        //    {
+        //        response.status = "FAIL";
+        //        response.msg = "No tasks found. Please try again later.";
+        //        response.response = null;
+        //        return response;
+        //    }
+        //}
 
         public GenericResponseModel UPDATE_Task_Status(ClaimsIdentity identity, int taskID, string status)
         {
@@ -351,15 +361,13 @@ namespace fehrist.Services
                 response.status = "PASS";
                 response.msg = "Status Updated.";
                 response.response = result;
-                response.code = 200; // OK
                 return response;
             }
             else
             {
                 response.status = "FAIL";
-                response.msg = "Internal Server Error Occurred.";
+                response.msg = "No tasks found. Please try again later.";
                 response.response = null;
-                response.code = 500; // Internal Server Error
                 return response;
             }
         }
@@ -377,17 +385,15 @@ namespace fehrist.Services
             if (result != null)
             {
                 response.status = "PASS";
-                response.msg = "Color Updated.";
+                response.msg = "Status Updated.";
                 response.response = result;
-                response.code = 200; // OK
                 return response;
             }
             else
             {
                 response.status = "FAIL";
-                response.msg = "Internal Server Error Occurred.";
+                response.msg = "No tasks found. Please try again later.";
                 response.response = null;
-                response.code = 500; // Internal Server Error
                 return response;
             }
         }
@@ -407,24 +413,22 @@ namespace fehrist.Services
                     response.status = "PASS";
                     response.msg = "Tasks retrieved successfully.";
                     response.response = result;
-                    response.code = 200; // OK
                     return response;
                 }
                 response.status = "FAIL";
-                response.msg = "No records found.";
+                response.msg = "No tasks found.";
                 response.response = null;
-                response.code = 404; // OK
                 return response;
             }
             else
             {
                 response.status = "FAIL";
-                response.msg = "Internal Server Error Occurred.";
+                response.msg = "No tasks found.";
                 response.response = null;
-                response.code = 500; // Internal Server Error
                 return response;
             }
         }
+
 
     }
 }
