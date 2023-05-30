@@ -324,9 +324,13 @@
     <Compile Include="Models\API Models\Request\User\UpdateTaskColor.cs" />
     <Compile Include="Models\API Models\Request\User\UpdateTaskRequest.cs" />
     <Compile Include="Models\API Models\ResponseModel.cs" />
+    <Compile Include="Models\API Models\Response\User\ChecklistResponse.cs" />
     <Compile Include="Models\API Models\Response\User\GET_AllTasksResponse.cs" />
     <Compile Include="Models\API Models\Response\User\LoginResponse.cs" />
     <Compile Include="Models\API Models\Response\User\RegistrationResponse.cs" />
+    <Compile Include="Models\CHECKLIST.cs">
+      <DependentUpon>FehristDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\FehristDB.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -14,5 +14,6 @@ namespace fehrist.Models.API_Models.Response.User
         public string color { get; set; }
         public string dueDate { get; set; }
         public List<ImagesModel> imageList { get; set; }
+        public List<ChecklistResponse> checkList{ get; set; }
     }
 }

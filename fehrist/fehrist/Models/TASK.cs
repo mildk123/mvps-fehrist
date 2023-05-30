@@ -17,6 +17,7 @@ namespace fehrist.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TASK()
         {
+            this.CHECKLISTs = new HashSet<CHECKLIST>();
             this.TASK_IMAGES = new HashSet<TASK_IMAGES>();
         }
     
@@ -34,6 +35,8 @@ namespace fehrist.Models
         public Nullable<System.DateTime> DATE_UPDATED { get; set; }
     
         public virtual ACCOUNT ACCOUNT { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CHECKLIST> CHECKLISTs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TASK_IMAGES> TASK_IMAGES { get; set; }
     }
