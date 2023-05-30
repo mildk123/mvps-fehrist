@@ -243,10 +243,11 @@ namespace fehrist.Services
             var dueDate = data["T_DUE_DATE_TIME"].ToString();
             var addedDate = data["T_ADDED_DATE_TIME"].ToString();
             var prevImages = data["T_PREV_IMAGE"];
+            var checkList = data["T_CHECKLIST"];
 
             if (prevImages != "[]" && prevImages != "0")
             {
-                string result = accessor.UPDATE_TaskImage(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList, prevImages);
+                string result = accessor.UPDATE_TaskImage(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList, prevImages, checkList);
                 GenericResponseModel response = new GenericResponseModel();
                 if (result != null)
                 {
@@ -265,7 +266,7 @@ namespace fehrist.Services
             }
             else
             {
-                string result = accessor.SET_Task(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList);
+                string result = accessor.SET_Task(accID, taskID, title, desc, status, color, dueDate, addedDate, filesList, checkList);
                 GenericResponseModel response = new GenericResponseModel();
                 if (result != null)
                 {
@@ -284,6 +285,32 @@ namespace fehrist.Services
             }
 
 
+        }
+
+        public GenericResponseModel Remove_Check(ClaimsIdentity identity, int checkID)
+        {
+            IEnumerable<Claim> claims = identity.Claims;
+            int accID = Int32.Parse(claims.Where(x => x.Type == "accountID").FirstOrDefault()?.Value);
+
+            UserAccessor accessor = new UserAccessor();
+
+            string result = accessor.DELETE_Check(accID, checkID);
+
+            GenericResponseModel response = new GenericResponseModel();
+            if (result != null)
+            {
+                response.status = "PASS";
+                response.msg = result;
+                response.response = result;
+                return response;
+            }
+            else
+            {
+                response.status = "FAIL";
+                response.msg = "No check found. Please try again later.";
+                response.response = null;
+                return response;
+            }
         }
 
         public GenericResponseModel DELETE_Tasks(ClaimsIdentity identity, int taskID)
@@ -311,40 +338,6 @@ namespace fehrist.Services
                 return response;
             }
         }
-
-        //public GenericResponseModel UPDATE_Task(ClaimsIdentity identity)
-        //{
-        //    IEnumerable<Claim> claims = identity.Claims;
-        //    int accID = Int32.Parse(claims.Where(x => x.Type == "accountID").FirstOrDefault()?.Value);
-
-        //    UserAccessor accessor = new UserAccessor();
-
-        //    var data = HttpContext.Current.Request.Form;
-        //    var taskID = Int32.Parse(data["TaskID"]);
-        //    var title = data["T_TITLE"].ToString();
-        //    var desc = data["T_DESC"].ToString();
-        //    var color = data["T_COLOR"].ToString();
-        //    var dueDate = data["T_DUE_DATE_TIME"].ToString();
-        //    var addedDate = data["T_ADDED_DATE_TIME"].ToString();
-
-        //    string result = accessor.UPDATE_Task(taskID, accID, title, desc, color, dueDate);
-
-        //    GenericResponseModel response = new GenericResponseModel();
-        //    if (result != null)
-        //    {
-        //        response.status = "PASS";
-        //        response.msg = "Tasks Updated successfully.";
-        //        response.response = result;
-        //        return response;
-        //    }
-        //    else
-        //    {
-        //        response.status = "FAIL";
-        //        response.msg = "No tasks found. Please try again later.";
-        //        response.response = null;
-        //        return response;
-        //    }
-        //}
 
         public GenericResponseModel UPDATE_Task_Status(ClaimsIdentity identity, int taskID, string status)
         {
@@ -428,7 +421,5 @@ namespace fehrist.Services
                 return response;
             }
         }
-
-
     }
 }

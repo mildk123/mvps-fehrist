@@ -750,7 +750,9 @@ ViewTask = (taskID) => {
         console.log(response.msg);
       } else if (response.status == "PASS") {
         var imageContainer = $("#imageContainer");
+        var checklistContainer = $("#checklistContainer");
         imageContainer.empty();
+        checklistContainer.empty();
         prevImageList = [];
         checklistItems = [];
         var data = response.response;
@@ -774,6 +776,60 @@ ViewTask = (taskID) => {
                         </div>`;
           imageContainer.append(item);
         });
+        $.each(data.checkList, (index, element) => {
+          var checkItem = `<div
+          class="form-group checklistItem d-flex align-items-center"
+        >
+          <input
+            type="text"
+            disabled
+            class="form-control"
+            name="checklistItem"
+            value="${element.desc}"
+          />
+          <button onclick="RemoveCheckDB('${element.checkID}')" class="btn btn-danger deleteChecklistItem">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>`;
+          checklistContainer.append(checkItem);
+        });
+      }
+    })
+    .catch((err) => {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Unable to reach server at the moment. Please check your internet connection!",
+        footer: err.message,
+      });
+    });
+};
+
+RemoveCheckDB = (checkID) => {
+  var userProfile = document.cookie;
+  var cookieValue = JSON.parse(userProfile.split("=")[1]);
+  var token = "Bearer " + cookieValue.token.data;
+
+  fetch(`${BASE_URL}/api/user/tasks/checks/remove?checkID=${checkID}`, {
+    method: "GET",
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((result) => {
+      return result.json();
+    })
+    .then((response) => {
+      if (response.status == "Redirect") {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: response.msg,
+        });
+        window.location.pathname = "/pages/login.html";
+      } else if (response.status == "FAIL") {
+        Swal.fire("Error", "Failed to remove checklist item.");
+      } else if (response.status == "PASS") {
       }
     })
     .catch((err) => {

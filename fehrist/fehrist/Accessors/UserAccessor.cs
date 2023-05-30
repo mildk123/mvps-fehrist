@@ -173,6 +173,22 @@ namespace fehrist.Accessors
                     }
                     taskResponse.imageList = imgs;
                 }
+
+                var checks = DB.CHECKLISTs.Where(x => x.TASKID == selectedTask.TASKID).ToList();
+                if (checks != null)
+                {
+                    List<ChecklistResponse> checkListUser = new List<ChecklistResponse>();
+                    foreach (var item in checks)
+                    {
+                        ChecklistResponse checkITEM = new ChecklistResponse()
+                        {
+                            checkID = item.CHECKID,
+                            desc = item.CL_DESCRIPTION
+                        };
+                        checkListUser.Add(checkITEM);
+                    }
+                    taskResponse.checkList = checkListUser;
+                }
                 return taskResponse;
             }
             else
@@ -181,10 +197,11 @@ namespace fehrist.Accessors
             }
         }
 
-        public string SET_Task(int accID, int taskID, string title, string desc, string status, string color, string dueDate, string addedDate, List<HttpPostedFile> filesList)
+        public string SET_Task(int accID, int taskID, string title, string desc, string status, string color, string dueDate, string addedDate, List<HttpPostedFile> filesList, string checkList)
         {
             if (taskID == 0)
             {
+                // NEW ZERO METER TASK
                 TASK newTask = new TASK()
                 {
                     ACCOUNTID = accID,
@@ -219,11 +236,32 @@ namespace fehrist.Accessors
                         DB.SaveChanges();
                     }
                 }
+
+
+                var serializer = new JavaScriptSerializer();
+                var checkListRec = serializer.Deserialize<List<string>>(checkList);
+
+                if (checkListRec != null)
+                {
+                    foreach (var item in checkListRec)
+                    {
+                        CHECKLIST newCheck = new CHECKLIST()
+                        {
+                            DATE_CREATED = DateTime.Now,
+                            CL_DESCRIPTION = item.ToString(),
+                            TASKID = newTask.TASKID,
+                            CREATED_BY = accID.ToString()
+                        };
+                        DB.CHECKLISTs.Add(newCheck);
+                        DB.SaveChanges();
+                    }
+                    DB.SaveChanges();
+                }
                 return "Successfully saved task";
             }
             else
             {
-                // UPDATE OLD TASK
+                // UPDATE OLD TASK NO PICS BEFORE
                 var updateTask = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
                 if (updateTask != null)
                 {
@@ -232,6 +270,8 @@ namespace fehrist.Accessors
                     updateTask.T_DESC = desc;
                     updateTask.T_DUE_DATE_TIME = dueDate;
                     updateTask.TASK_IMAGES.Clear();
+                    DB.CHECKLISTs.RemoveRange(updateTask.CHECKLISTs.Select(ti => ti));
+                    DB.SaveChanges();
                     for (int i = 0; i < filesList.Count; i++)
                     {
                         var file = filesList[i];
@@ -254,6 +294,25 @@ namespace fehrist.Accessors
 
                         }
                     }
+                    var serializer = new JavaScriptSerializer();
+                    var checkListRec = serializer.Deserialize<List<string>>(checkList);
+
+                    if (checkListRec != null)
+                    {
+                        foreach (var item in checkListRec)
+                        {
+                            CHECKLIST newCheck = new CHECKLIST()
+                            {
+                                DATE_CREATED = DateTime.Now,
+                                CL_DESCRIPTION = item.ToString(),
+                                TASKID = updateTask.TASKID,
+                                CREATED_BY = accID.ToString()
+                            };
+                            DB.CHECKLISTs.Add(newCheck);
+                            DB.SaveChanges();
+                        }
+                        DB.SaveChanges();
+                    }
                     DB.SaveChanges();
 
                     return "Successfully updated task";
@@ -267,9 +326,9 @@ namespace fehrist.Accessors
 
         }
 
-        public string UPDATE_TaskImage(int accID, int taskID, string title, string desc, string status, string color, string dueDate, string addedDate, List<HttpPostedFile> filesList, String previmages)
+        public string UPDATE_TaskImage(int accID, int taskID, string title, string desc, string status, string color, string dueDate, string addedDate, List<HttpPostedFile> filesList, string previmages, string checkList)
         {
-            // UPDATE OLD TASK WTIH IMAGES
+            // UPDATE OLD TASK WTIH CHANGE IN IMAGES
             var updateTask = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
             if (updateTask != null)
             {
@@ -278,6 +337,7 @@ namespace fehrist.Accessors
                 updateTask.T_DESC = desc;
                 updateTask.T_DUE_DATE_TIME = dueDate;
                 updateTask.TASK_IMAGES.Clear();
+                DB.CHECKLISTs.RemoveRange(updateTask.CHECKLISTs.Select(ti => ti));
                 DB.SaveChanges();
 
 
@@ -321,10 +381,53 @@ namespace fehrist.Accessors
                     DB.SaveChanges();
                 }
 
+                var checkListRec = serializer.Deserialize<List<string>>(checkList);
+                if (checkListRec != null)
+                {
+                    foreach (var item in checkListRec)
+                    {
+                        CHECKLIST newCheck = new CHECKLIST()
+                        {
+                            CL_DESCRIPTION = item.ToString(),
+                            TASKID = updateTask.TASKID,
+                            DATE_UPDATED = DateTime.Now,
+                            UPDATE_BY = accID.ToString()
+                        };
+                        DB.CHECKLISTs.Add(newCheck);
+                        DB.SaveChanges();
+                    }
+                    DB.SaveChanges();
+                }
+
                 return "Successfully updated task";
 
             }
             else
+            {
+                return null;
+            }
+        }
+
+        public string DELETE_Check(int accID, int checkID)
+        {
+            try
+            {
+                var checkITEM = DB.CHECKLISTs.Where(x => x.CHECKID == checkID && x.TASK.ACCOUNTID == accID).FirstOrDefault();
+                if (checkITEM != null)
+                {
+
+
+                    DB.CHECKLISTs.Remove(checkITEM);
+                    DB.SaveChanges();
+                    return "Successfully removed checklist";
+                }
+                else
+                {
+                    return "Checklist not found.";
+                }
+
+            }
+            catch (Exception)
             {
                 return null;
             }
@@ -359,33 +462,7 @@ namespace fehrist.Accessors
                 return null;
             }
         }
-
-        //public string UPDATE_Task(int taskID, int accID, string title, string desc, string color, string dueDate)
-        //{
-        //    try
-        //    {
-        //        var taskSelected = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
-        //        if (taskSelected != null)
-        //        {
-        //            taskSelected.T_TITLE = title;
-        //            taskSelected.T_DESC = desc;
-        //            taskSelected.T_COLOR = color;
-        //            taskSelected.T_DUE_DATE_TIME = dueDate;
-        //            DB.SaveChanges();
-
-        //            return "Task updated succuessfully.";
-        //        }
-        //        else
-        //        {
-        //            return "The selected task does not exists anymore.";
-        //        }
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return "An error occured while updating current task. Please login again refresh the caches.";
-        //    }
-        //}
-
+        
         public string UPDATE_Task_Status(int taskID, int accID, string status)
         {
             try

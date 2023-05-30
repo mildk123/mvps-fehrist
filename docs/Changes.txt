@@ -1,4 +1,4 @@
----------------- Checklist
+----------------------------------------- Checklist
 ----------------------------------------- At least 3 characters before search.
 ----------------------------------------- Merge manual to readme.
 liquiBase

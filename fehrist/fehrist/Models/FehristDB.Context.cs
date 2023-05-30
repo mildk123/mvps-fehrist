@@ -26,6 +26,7 @@ namespace fehrist.Models
         }
     
         public virtual DbSet<ACCOUNT> ACCOUNTS { get; set; }
+        public virtual DbSet<CHECKLIST> CHECKLISTs { get; set; }
         public virtual DbSet<ROLE> ROLES { get; set; }
         public virtual DbSet<TASK_IMAGES> TASK_IMAGES { get; set; }
         public virtual DbSet<TASK> TASKS { get; set; }

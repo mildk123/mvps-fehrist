@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="FEHRISTDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="FEHRISTDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="ACCOUNTS">
           <Key>
             <PropertyRef Name="ACCOUNTID" />
@@ -16,6 +16,18 @@
           <Property Name="PASS" Type="text" Nullable="false" />
           <Property Name="PHONE" Type="varchar" MaxLength="50" />
           <Property Name="AC_STATUS" Type="varchar" MaxLength="50" />
+          <Property Name="CREATED_BY" Type="varchar" MaxLength="50" />
+          <Property Name="DATE_CREATED" Type="datetime" />
+          <Property Name="UPDATE_BY" Type="varchar" MaxLength="50" />
+          <Property Name="DATE_UPDATED" Type="datetime" />
+        </EntityType>
+        <EntityType Name="CHECKLIST">
+          <Key>
+            <PropertyRef Name="CHECKID" />
+          </Key>
+          <Property Name="CHECKID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CL_DESCRIPTION" Type="text" />
+          <Property Name="TASKID" Type="int" />
           <Property Name="CREATED_BY" Type="varchar" MaxLength="50" />
           <Property Name="DATE_CREATED" Type="datetime" />
           <Property Name="UPDATE_BY" Type="varchar" MaxLength="50" />
@@ -61,7 +73,7 @@
           <Property Name="UPDATE_BY" Type="varchar" MaxLength="50" />
           <Property Name="DATE_UPDATED" Type="datetime" />
         </EntityType>
-        <Association Name="FK__ACCOUNTS__ROLEID__0E6E26BF">
+        <Association Name="FK__ACCOUNTS__ROLEID__2DE6D218">
           <End Role="ROLES" Type="Self.ROLES" Multiplicity="0..1" />
           <End Role="ACCOUNTS" Type="Self.ACCOUNTS" Multiplicity="*" />
           <ReferentialConstraint>
@@ -73,7 +85,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__TASK_IMAG__TASKI__2180FB33">
+        <Association Name="FK__CHECKLIST__TASKI__6166761E">
+          <End Role="TASKS" Type="Self.TASKS" Multiplicity="0..1" />
+          <End Role="CHECKLIST" Type="Self.CHECKLIST" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TASKS">
+              <PropertyRef Name="TASKID" />
+            </Principal>
+            <Dependent Role="CHECKLIST">
+              <PropertyRef Name="TASKID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TASK_IMAG__TASKI__40F9A68C">
           <End Role="TASKS" Type="Self.TASKS" Multiplicity="0..1" />
           <End Role="TASK_IMAGES" Type="Self.TASK_IMAGES" Multiplicity="*" />
           <ReferentialConstraint>
@@ -85,7 +109,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__TASKS__ACCOUNTID__17F790F9">
+        <Association Name="FK__TASKS__ACCOUNTID__37703C52">
           <End Role="ACCOUNTS" Type="Self.ACCOUNTS" Multiplicity="0..1" />
           <End Role="TASKS" Type="Self.TASKS" Multiplicity="*" />
           <ReferentialConstraint>
@@ -99,23 +123,29 @@
         </Association>
         <EntityContainer Name="FEHRISTDBModelStoreContainer">
           <EntitySet Name="ACCOUNTS" EntityType="Self.ACCOUNTS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CHECKLIST" EntityType="Self.CHECKLIST" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ROLES" EntityType="Self.ROLES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TASK_IMAGES" EntityType="Self.TASK_IMAGES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TASKS" EntityType="Self.TASKS" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__ACCOUNTS__ROLEID__0E6E26BF" Association="Self.FK__ACCOUNTS__ROLEID__0E6E26BF">
+          <AssociationSet Name="FK__ACCOUNTS__ROLEID__2DE6D218" Association="Self.FK__ACCOUNTS__ROLEID__2DE6D218">
             <End Role="ROLES" EntitySet="ROLES" />
             <End Role="ACCOUNTS" EntitySet="ACCOUNTS" />
           </AssociationSet>
-          <AssociationSet Name="FK__TASK_IMAG__TASKI__2180FB33" Association="Self.FK__TASK_IMAG__TASKI__2180FB33">
+          <AssociationSet Name="FK__CHECKLIST__TASKI__6166761E" Association="Self.FK__CHECKLIST__TASKI__6166761E">
+            <End Role="TASKS" EntitySet="TASKS" />
+            <End Role="CHECKLIST" EntitySet="CHECKLIST" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TASK_IMAG__TASKI__40F9A68C" Association="Self.FK__TASK_IMAG__TASKI__40F9A68C">
             <End Role="TASKS" EntitySet="TASKS" />
             <End Role="TASK_IMAGES" EntitySet="TASK_IMAGES" />
           </AssociationSet>
-          <AssociationSet Name="FK__TASKS__ACCOUNTID__17F790F9" Association="Self.FK__TASKS__ACCOUNTID__17F790F9">
+          <AssociationSet Name="FK__TASKS__ACCOUNTID__37703C52" Association="Self.FK__TASKS__ACCOUNTID__37703C52">
             <End Role="ACCOUNTS" EntitySet="ACCOUNTS" />
             <End Role="TASKS" EntitySet="TASKS" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="FEHRISTDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -134,8 +164,21 @@
           <Property Name="DATE_CREATED" Type="DateTime" Precision="3" />
           <Property Name="UPDATE_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DATE_UPDATED" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ROLE" Relationship="Self.FK__ACCOUNTS__ROLEID__47DBAE45" FromRole="ACCOUNTS" ToRole="ROLES" />
-          <NavigationProperty Name="TASKS" Relationship="Self.FK__TASKS__ACCOUNTID__5EBF139D" FromRole="ACCOUNTS" ToRole="TASKS" />
+          <NavigationProperty Name="ROLE" Relationship="Self.FK__ACCOUNTS__ROLEID__2DE6D218" FromRole="ACCOUNTS" ToRole="ROLES" />
+          <NavigationProperty Name="TASKS" Relationship="Self.FK__TASKS__ACCOUNTID__37703C52" FromRole="ACCOUNTS" ToRole="TASKS" />
+        </EntityType>
+        <EntityType Name="CHECKLIST">
+          <Key>
+            <PropertyRef Name="CHECKID" />
+          </Key>
+          <Property Name="CHECKID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CL_DESCRIPTION" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TASKID" Type="Int32" />
+          <Property Name="CREATED_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DATE_CREATED" Type="DateTime" Precision="3" />
+          <Property Name="UPDATE_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DATE_UPDATED" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="TASK" Relationship="Self.FK__CHECKLIST__TASKI__6166761E" FromRole="CHECKLIST" ToRole="TASKS" />
         </EntityType>
         <EntityType Name="ROLE">
           <Key>
@@ -147,7 +190,7 @@
           <Property Name="DATE_CREATED" Type="DateTime" Precision="3" />
           <Property Name="UPDATE_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DATE_UPDATED" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ACCOUNTS" Relationship="Self.FK__ACCOUNTS__ROLEID__47DBAE45" FromRole="ROLES" ToRole="ACCOUNTS" />
+          <NavigationProperty Name="ACCOUNTS" Relationship="Self.FK__ACCOUNTS__ROLEID__2DE6D218" FromRole="ROLES" ToRole="ACCOUNTS" />
         </EntityType>
         <EntityType Name="TASK_IMAGES">
           <Key>
@@ -160,7 +203,7 @@
           <Property Name="DATE_CREATED" Type="DateTime" Precision="3" />
           <Property Name="UPDATE_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DATE_UPDATED" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="TASK" Relationship="Self.FK__TASK_IMAG__TASKI__68487DD7" FromRole="TASK_IMAGES" ToRole="TASKS" />
+          <NavigationProperty Name="TASK" Relationship="Self.FK__TASK_IMAG__TASKI__40F9A68C" FromRole="TASK_IMAGES" ToRole="TASKS" />
         </EntityType>
         <EntityType Name="TASK">
           <Key>
@@ -178,10 +221,11 @@
           <Property Name="DATE_CREATED" Type="DateTime" Precision="3" />
           <Property Name="UPDATE_BY" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DATE_UPDATED" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ACCOUNT" Relationship="Self.FK__TASKS__ACCOUNTID__5EBF139D" FromRole="TASKS" ToRole="ACCOUNTS" />
-          <NavigationProperty Name="TASK_IMAGES" Relationship="Self.FK__TASK_IMAG__TASKI__68487DD7" FromRole="TASKS" ToRole="TASK_IMAGES" />
+          <NavigationProperty Name="ACCOUNT" Relationship="Self.FK__TASKS__ACCOUNTID__37703C52" FromRole="TASKS" ToRole="ACCOUNTS" />
+          <NavigationProperty Name="CHECKLISTs" Relationship="Self.FK__CHECKLIST__TASKI__6166761E" FromRole="TASKS" ToRole="CHECKLIST" />
+          <NavigationProperty Name="TASK_IMAGES" Relationship="Self.FK__TASK_IMAG__TASKI__40F9A68C" FromRole="TASKS" ToRole="TASK_IMAGES" />
         </EntityType>
-        <Association Name="FK__ACCOUNTS__ROLEID__47DBAE45">
+        <Association Name="FK__ACCOUNTS__ROLEID__2DE6D218">
           <End Role="ROLES" Type="Self.ROLE" Multiplicity="0..1" />
           <End Role="ACCOUNTS" Type="Self.ACCOUNT" Multiplicity="*" />
           <ReferentialConstraint>
@@ -193,7 +237,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__TASKS__ACCOUNTID__5EBF139D">
+        <Association Name="FK__TASKS__ACCOUNTID__37703C52">
           <End Role="ACCOUNTS" Type="Self.ACCOUNT" Multiplicity="0..1" />
           <End Role="TASKS" Type="Self.TASK" Multiplicity="*" />
           <ReferentialConstraint>
@@ -205,7 +249,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__TASK_IMAG__TASKI__68487DD7">
+        <Association Name="FK__CHECKLIST__TASKI__6166761E">
+          <End Role="TASKS" Type="Self.TASK" Multiplicity="0..1" />
+          <End Role="CHECKLIST" Type="Self.CHECKLIST" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TASKS">
+              <PropertyRef Name="TASKID" />
+            </Principal>
+            <Dependent Role="CHECKLIST">
+              <PropertyRef Name="TASKID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__TASK_IMAG__TASKI__40F9A68C">
           <End Role="TASKS" Type="Self.TASK" Multiplicity="0..1" />
           <End Role="TASK_IMAGES" Type="Self.TASK_IMAGES" Multiplicity="*" />
           <ReferentialConstraint>
@@ -219,18 +275,23 @@
         </Association>
         <EntityContainer Name="DBEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="ACCOUNTS" EntityType="Self.ACCOUNT" />
+          <EntitySet Name="CHECKLISTs" EntityType="Self.CHECKLIST" />
           <EntitySet Name="ROLES" EntityType="Self.ROLE" />
           <EntitySet Name="TASK_IMAGES" EntityType="Self.TASK_IMAGES" />
           <EntitySet Name="TASKS" EntityType="Self.TASK" />
-          <AssociationSet Name="FK__ACCOUNTS__ROLEID__47DBAE45" Association="Self.FK__ACCOUNTS__ROLEID__47DBAE45">
+          <AssociationSet Name="FK__ACCOUNTS__ROLEID__2DE6D218" Association="Self.FK__ACCOUNTS__ROLEID__2DE6D218">
             <End Role="ROLES" EntitySet="ROLES" />
             <End Role="ACCOUNTS" EntitySet="ACCOUNTS" />
           </AssociationSet>
-          <AssociationSet Name="FK__TASKS__ACCOUNTID__5EBF139D" Association="Self.FK__TASKS__ACCOUNTID__5EBF139D">
+          <AssociationSet Name="FK__TASKS__ACCOUNTID__37703C52" Association="Self.FK__TASKS__ACCOUNTID__37703C52">
             <End Role="ACCOUNTS" EntitySet="ACCOUNTS" />
             <End Role="TASKS" EntitySet="TASKS" />
           </AssociationSet>
-          <AssociationSet Name="FK__TASK_IMAG__TASKI__68487DD7" Association="Self.FK__TASK_IMAG__TASKI__68487DD7">
+          <AssociationSet Name="FK__CHECKLIST__TASKI__6166761E" Association="Self.FK__CHECKLIST__TASKI__6166761E">
+            <End Role="TASKS" EntitySet="TASKS" />
+            <End Role="CHECKLIST" EntitySet="CHECKLISTs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__TASK_IMAG__TASKI__40F9A68C" Association="Self.FK__TASK_IMAG__TASKI__40F9A68C">
             <End Role="TASKS" EntitySet="TASKS" />
             <End Role="TASK_IMAGES" EntitySet="TASK_IMAGES" />
           </AssociationSet>
@@ -251,6 +312,19 @@
                 <ScalarProperty Name="PASS" ColumnName="PASS" />
                 <ScalarProperty Name="PHONE" ColumnName="PHONE" />
                 <ScalarProperty Name="AC_STATUS" ColumnName="AC_STATUS" />
+                <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
+                <ScalarProperty Name="DATE_CREATED" ColumnName="DATE_CREATED" />
+                <ScalarProperty Name="UPDATE_BY" ColumnName="UPDATE_BY" />
+                <ScalarProperty Name="DATE_UPDATED" ColumnName="DATE_UPDATED" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CHECKLISTs">
+            <EntityTypeMapping TypeName="FEHRISTDBModel.CHECKLIST">
+              <MappingFragment StoreEntitySet="CHECKLIST">
+                <ScalarProperty Name="CHECKID" ColumnName="CHECKID" />
+                <ScalarProperty Name="CL_DESCRIPTION" ColumnName="CL_DESCRIPTION" />
+                <ScalarProperty Name="TASKID" ColumnName="TASKID" />
                 <ScalarProperty Name="CREATED_BY" ColumnName="CREATED_BY" />
                 <ScalarProperty Name="DATE_CREATED" ColumnName="DATE_CREATED" />
                 <ScalarProperty Name="UPDATE_BY" ColumnName="UPDATE_BY" />
