@@ -1,25 +1,32 @@
+var BASE_URL = "http://localhost:56067";
+
 // checkAuth.js
 window.addEventListener("DOMContentLoaded", function () {
   if (isUserAuthenticated()) {
+    // IF TOKEN IS VERIFIED -> DO NOT PERFROM ANY CHANGE
   } else if (
     location.pathname == "/pages/login.html" ||
     location.pathname == "/pages/register.html"
   ) {
+    // IF USER IS NOT VERIFIED AND IS ON LOGIN/REG PAGE, DELETE ALL HIS PREVIOUS COOKIES TO PREVENT ERRORS
     localStorage.clear();
     deleteAllCookies();
-  } else if (
-    location.pathname !== "/pages/login.html" &&
-    location.pathname !== "/pages/register.html" &&
-    location.pathname !== "/"
-  ) {
-    window.location.replace("/");
+    // } else if (
+    //   location.pathname !== "/pages/login.html" &&
+    //   location.pathname !== "/pages/register.html" &&
+    //   location.pathname !== "/"
+    // ) {
+    // window.location.replace("/");
   } else {
+    // CLEAR COOKIES AND SENDS USER TO LOGIN PAGES
     localStorage.clear();
     deleteAllCookies();
     window.location.replace("/pages/login.html");
   }
 });
 
+
+// HANDLES GOOGLE AND FB LOGIN
 if (location.pathname == "/pages/register.html") {
   // Initialize FB Login
   document.addEventListener("DOMContentLoaded", function () {
@@ -87,8 +94,7 @@ if (location.pathname == "/pages/register.html") {
   }
 }
 
-var BASE_URL = "http://localhost:56067";
-
+// CLEAR COOKIES
 deleteAllCookies = () => {
   var cookies = document.cookie.split(";");
   for (var i = 0; i < cookies.length; i++) {
@@ -99,6 +105,7 @@ deleteAllCookies = () => {
   }
 };
 
+// VERIFIY CURRENT STORED JWT TOKEN OF USER AND RESPOND IN BOOLEAN
 isUserAuthenticated = () => {
   const tokenString = getCookie("FehristCookie");
   var tokenJson = JSON.parse(tokenString);
@@ -113,9 +120,11 @@ isUserAuthenticated = () => {
     })
       .then((res) => {
         if (res.status == 200) return res.json();
-        else if (res.status == 400)
-        clearAllCookies();
-          Swal.fire("Error", "Login session is invalid or expired! clear browser cache and try again  !");
+        else if (res.status == 400) deleteAllCookies();
+        Swal.fire(
+          "Error",
+          "Login session is invalid or expired! clear browser cache and try again  !"
+        );
       })
       .then((response) => {
         if (response == "valid") {
@@ -133,7 +142,7 @@ isUserAuthenticated = () => {
     // No token found, user is not authenticated
     return false;
   }
-}
+};
 
 // Helper function to retrieve a cookie value by name
 function getCookie(name) {
@@ -147,13 +156,3 @@ function getCookie(name) {
   }
   return null;
 }
-
-clearAllCookies = () => {
-  var cookies = document.cookie.split(";");
-  for (var i = 0; i < cookies.length; i++) {
-    var cookie = cookies[i];
-    var pos = cookie.indexOf("=");
-    var name = pos > -1 ? cookie.substr(0, pos) : cookie;
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-  }
-};

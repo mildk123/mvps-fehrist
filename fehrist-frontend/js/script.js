@@ -1,6 +1,7 @@
+// PERMENANTLY SET LOADING ICON TO FALSE, UNLESS CALLED WITHIN A FUNCTION
 $("#LoadingIcon").css("display", "none");
 
-// ADD IMAGE TO NEW TASK
+// ONLOAD FUNCTION THAT CALLS VARIOUS ACTIONS BASE ON PATHNAME.
 window.addEventListener("load", (event) => {
   if (location.pathname == "/" || location.pathname == "/index.html") {
     GET_Tasks("Added");
@@ -63,6 +64,7 @@ window.addEventListener("load", (event) => {
 
 var BASE_URL = "http://localhost:56067";
 
+// FUNCTION CALLED FROM OTHER FUNCTION THE VERIFY EMAIL FORMAT AS PER THE PROVIDED REGEX
 function isValidEmail(email) {
   // Regular expression to validate email format
   var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -72,6 +74,7 @@ function isValidEmail(email) {
 }
 
 // AUTHORIZATION
+// SIGN-UP FUNCTION
 $("#SignupBtn").on("click", () => {
   var name = $("#RegNameBox").val();
   var email = $("#RegEmailBox").val();
@@ -171,7 +174,7 @@ $("#SignupBtn").on("click", () => {
       $("#SignupBtn").css("display", "block");
     });
 });
-
+// SIGN-IN FUNCTION
 $("#LoginBtn").on("click", () => {
   var email = $("#LoginEmailBox").val();
   var pass = $("#LoginPassBox").val();
@@ -253,6 +256,7 @@ $("#LoginBtn").on("click", () => {
     });
 });
 
+// FUNCTION CALLED ON LOGOUT TO CLEAN BROWSER FROM COOKIES
 deleteAllCookies = () => {
   var cookies = document.cookie.split(";");
   for (var i = 0; i < cookies.length; i++) {
@@ -263,7 +267,7 @@ deleteAllCookies = () => {
   }
 };
 
-//Logout FUNCTION Faculty
+//BASE LOGOUT FUNCTION
 $("#BtnLogout").click(function (e) {
   e.preventDefault();
   localStorage.clear();
@@ -272,9 +276,10 @@ $("#BtnLogout").click(function (e) {
 });
 
 // HOME
-var imageList = [];
-var prevImageList = [];
+var imageList = []; // THIS LIST MAINTAINES THE IMAGES FETCHED FROM DB TO UNTIL VIEWED ON MODAL
+var prevImageList = []; // THIS LIST MAINTAINES THE IMAGES FETCHED FROM DB THAT ARE RETURN TO DB INCASE OF UPDATE TASK
 
+// EVENT HANDLING TO ADD IMAGES IN NEW TO-DO
 $("#todoImage").on("change", function () {
   var imageContainer = $("#imageContainer");
   for (var i = 0; i < this.files.length; i++) {
@@ -296,13 +301,16 @@ $("#todoImage").on("change", function () {
     reader.readAsDataURL(this.files[i]);
   }
 });
+// EVENT HANDLING TO DONE BUTTON ON MODAL TO SAVE TO-DO TO DB
 $("#AddTaskBtn").on("click", () => {
   $("#LoadingIcon").css("display", "block");
   SET_Task();
 });
+// EVENT HANDLING TO OPEN ADD TASK MODAL
 $("#FABBtn").on("click", () => {
   AddTaskModal();
 });
+// EVENT HANDLING OF SEARCH BUTTON
 $("#SearchBtn").on("click", () => {
   if (location.pathname == "/" || location.pathname == "/index.html") {
     _SearchTask("Added");
@@ -314,6 +322,7 @@ $("#SearchBtn").on("click", () => {
     _SearchTask("Completed");
   }
 });
+// EVENT HANDLING OF SEARCH TEXT CHANGE
 $("#SearchBox").on("change", () => {
   if (location.pathname == "/" || location.pathname == "/index.html") {
     _SearchTask("Added");
@@ -326,6 +335,7 @@ $("#SearchBox").on("change", () => {
   }
 });
 
+// OPEN ADD TASK MODAL AFTER CLEARING ANY PREVIOUS STORED VALUES
 AddTaskModal = () => {
   $("#taskID").empty();
   $("#todoTitle").val("");
@@ -337,13 +347,14 @@ AddTaskModal = () => {
   prevImageList = [];
   $("#addTODOModal").modal("toggle");
 };
-// remove image from card during addition
+// METHOD TO REMOVE IMAGE FROM ADDED LIST TO ADD TASK MODEL BY X BUTTON
 _RemoveImage = (context, index) => {
   imageList.splice(index, 1);
   prevImageList.splice(index, 1);
   context.parentNode.remove();
 };
 
+// BASE FUNCTION TO SAVE TASK TO DB
 SET_Task = () => {
   var count = 1;
   var taskID = $("#taskID").text() == "" ? "new" : $("#taskID").text();
@@ -400,13 +411,13 @@ SET_Task = () => {
         footer: err.message,
       });
     })
-    .finally( () => {
+    .finally(() => {
       $("#LoadingIcon").css("display", "none");
     });
 };
 
+// GET ALL TASKS FROM DB ACCORDING TO THE CURRENT STATUS
 GET_Tasks = (status) => {
-  debugger;
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
@@ -680,6 +691,7 @@ GET_Tasks = (status) => {
     });
 };
 
+// GET DATA FROM DB OF THE CLICKED TASK TO ADD TASK MODEL INCASE OF UPDATES OR CHANGES
 ViewTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
@@ -736,8 +748,8 @@ ViewTask = (taskID) => {
     });
 };
 
-//Most browsers seem to return the RGB value
-//Function to Convert RGB to Hex Code
+//CARD ACTIONS
+// CHANGES RGB TO HEX CODE FOR DB
 function rgb2hex(rgb) {
   rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
   function hex(x) {
@@ -745,6 +757,7 @@ function rgb2hex(rgb) {
   }
   return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
 }
+// TO CHANGE THE BACKGROUND COLOR OF TASK BASED ON THE CURRENT SELECTED COLOR
 _changeColor = (context, taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
@@ -792,7 +805,7 @@ _changeColor = (context, taskID) => {
       });
     });
 };
-
+// SETS THE STATUS OF SELECTED TASK TO COMPLETED SAVE TO DB
 _CompleteTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
@@ -834,7 +847,7 @@ _CompleteTask = (taskID) => {
       });
     });
 };
-
+// SETS THE STATUS OF SELECTED TASK TO ARCHIVED SAVE TO DB
 _ArchiveTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
@@ -877,7 +890,7 @@ _ArchiveTask = (taskID) => {
     });
 };
 
-// TRASH
+// DELETES THE TASK FROM DB AND VIEW
 _DeleteTask = (taskID) => {
   // hard delete
   var userProfile = document.cookie;
@@ -915,7 +928,7 @@ _DeleteTask = (taskID) => {
       });
     });
 };
-
+// SETS THE STATUS OF SELECTED TASK TO DELETED, SAVES TO DB
 _RemoveTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
@@ -962,7 +975,7 @@ _RemoveTask = (taskID) => {
       });
     });
 };
-
+// SETS THE STATUS OF SELECTED TASK TO ADDED, SAVES TO DB
 _RestoreTask = (taskID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
@@ -1004,294 +1017,308 @@ _RestoreTask = (taskID) => {
       });
     });
 };
-
+// SEARCHES THE TERM ENTERED IN DB BASED UPON SELECTED STATUS, (COMPLETED,ARCHIVED,ADDED,DELETED)
 _SearchTask = (status) => {
-  let timerInterval;
-  Swal.fire({
-    timer: 1000,
-    timerProgressBar: true,
-    didOpen: () => {
-      Swal.showLoading();
-    },
-    willClose: () => {
-      clearInterval(timerInterval);
-    },
-  });
   var term = $("#SearchBox").val();
-  var userProfile = document.cookie;
-  var cookieValue = JSON.parse(userProfile.split("=")[1]);
-  var token = "Bearer " + cookieValue.token.data;
-  var container = $("#cards-container");
-  debugger;
-  if (term == "") {
-    GET_Tasks(status);
+  if (term.length >= 3) {
+    let timerInterval;
+    Swal.fire({
+      timer: 1000,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      willClose: () => {
+        clearInterval(timerInterval);
+      },
+    });
+    var userProfile = document.cookie;
+    var cookieValue = JSON.parse(userProfile.split("=")[1]);
+    var token = "Bearer " + cookieValue.token.data;
+    var container = $("#cards-container");
+
+    fetch(`${BASE_URL}/api/user/tasks/?searchTerm=${term}&status=${status}`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((result) => {
+        return result.json();
+      })
+      .then((response) => {
+        if (response.status == "Redirect")
+          window.location.pathname = "/pages/login.html";
+        else if (response.status == "FAIL") {
+          container.empty();
+          container.append("<h1>Oh no... so empty</h1>");
+        } else if (response.status == "PASS") {
+          var data = response.response;
+          container.empty();
+          if (location.pathname == "/" || location.pathname == "/index.html") {
+            $.each(data, function (index, element) {
+              try {
+                var item = `<div class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12" style="background-color: ${
+                  element.color
+                }">
+            <div class="card-body">
+              <div class="image-grid">
+                ${
+                  element.imageList != null
+                    ? element.imageList
+                        .map(function (IMG, index) {
+                          return `<div class="image-wrapper"><img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" /></div>`;
+                        })
+                        .join("")
+                    : ""
+                }
+              </div>
+              <div class="card-details-container">
+                <p class="card-text card-heading">${element.title}</p>
+                <p class="card-text card-desc">
+                  ${element.desc}
+                </p>
+              </div>
+              <!-- ACTIONS STRIP -->
+              <div class="card-todo-action-strip col-12">
+                <li class="todo-action" onclick="_RemoveTask('${
+                  element.taskID
+                }')">
+                  <i class="fa fa-trash"></i>
+                </li>
+                <li class="todo-action" onclick="_ArchiveTask('${
+                  element.taskID
+                }')">
+                  <i class="fa fa-archive" ></i>
+                </li>
+                <li class="todo-action dropup">
+                  <i class="fa fa-paint-brush" data-toggle="dropdown"></i>
+                  <div
+                    class="color-palette dropdown-menu"
+                    style="position: absolute; top: 1px; z-index: 9999"
+                    tabindex="-1"
+                  >
+                  <div onClick="_changeColor(this,'${
+                    element.taskID
+                  }')" class="bg-white"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-red"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-orange"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-yellow"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-green"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-turquoise"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-blue"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-dark-blue"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-purple"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-pink"></div>
+                    <div onClick="_changeColor(this,'${
+                      element.taskID
+                    }')" class="bg-brown"></div>
+                    <div onClick="_changeColor(this, '${
+                      element.taskID
+                    }')" class="bg-grey"></div>
+                  </div>
+                </li>
+                <li class="todo-action" onclick="_CompleteTask('${
+                  element.taskID
+                }')">
+                  <i class="fa fa-check-circle"></i>
+                </li>
+                <btn class="todo-action" onclick="ViewTask('${
+                  element.taskID
+                }')">
+                  <i class="fa fa-pencil"></i>
+                </btn>
+              </div>
+            </div>
+                </div>`;
+              } catch (error) {
+                console.log(error);
+              }
+              container.append(item);
+            });
+          } else if (location.pathname == "/pages/trash.html") {
+            $.each(data, function (index, element) {
+              try {
+                var item = ` <div
+                class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isDeleted"
+              >
+                <div class="card-body">
+                  <div class="image-grid">
+                    ${
+                      element.imageList != null
+                        ? element.imageList
+                            .map(function (IMG, index) {
+                              return `<div class="image-wrapper"><img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" /></div>`;
+                            })
+                            .join("")
+                        : ""
+                    }
+                  </div>
+                  <div class="card-details-container">
+                    <p class="card-text card-heading">${element.title}</p>
+                    <p class="card-text card-desc">
+                    ${element.desc}
+                    </p>
+                  </div>
+                  <!-- ACTIONS STRIP -->
+                  <div class="card-todo-action-strip col-12">
+                    <li class="todo-action" onclick="_RestoreTask('${
+                      element.taskID
+                    }')">
+                      <span class="material-symbols-outlined">
+                        restore_from_trash
+                      </span>
+                    </li>
+                    <li class="todo-action" onclick="_DeleteTask('${
+                      element.taskID
+                    }')">
+                      <span class="material-symbols-outlined">
+                        delete_forever
+                      </span>
+                    </li>
+                  </div>
+                </div>
+              </div>`;
+              } catch (error) {
+                console.log(error);
+              }
+              container.append(item);
+            });
+          } else if (location.pathname == "/pages/completed.html") {
+            $.each(data, function (index, element) {
+              try {
+                var item = `<div
+                class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isCompleted"
+              >
+                <div class="card-body">
+                  <div class="image-grid">
+                    ${
+                      element.imageList != null
+                        ? element.imageList
+                            .map(function (IMG, index) {
+                              return `
+                    <div class="image-wrapper">
+                      <img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" />
+                    </div>
+                    `;
+                            })
+                            .join("")
+                        : ""
+                    }
+                  </div>
+                  <div class="card-details-container">
+                    <p class="card-text card-heading">${element.title}</p>
+                    <p class="card-text card-desc">${element.desc}</p>
+                  </div>
+                  <!-- ACTIONS STRIP -->
+                  <div class="card-todo-action-strip col-12">
+                    <li
+                      class="todo-action"
+                      onclick="_DeleteTask('${element.taskID}')"
+                    >
+                      <span class="material-symbols-outlined"> delete </span>
+                    </li>
+                  </div>
+                </div>
+              </div>`;
+              } catch (error) {
+                console.log(error);
+              }
+              container.append(item);
+            });
+          } else if (location.pathname == "/pages/archive.html") {
+            $.each(data, function (index, element) {
+              try {
+                var item = `<div
+                class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isArchived"
+              >
+                <div class="card-body">
+                  <div class="image-grid">
+                    ${
+                      element.imageList != null
+                        ? element.imageList
+                            .map(function (IMG, index) {
+                              return `
+                    <div class="image-wrapper">
+                      <img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" />
+                    </div>
+                    `;
+                            })
+                            .join("")
+                        : ""
+                    }
+                  </div>
+                  <div class="card-details-container">
+                    <p class="card-text card-heading">${element.title}</p>
+                    <p class="card-text card-desc">${element.desc}</p>
+                  </div>
+                  <!-- ACTIONS STRIP -->
+                  <!-- ACTIONS STRIP -->
+                  <div class="card-todo-action-strip col-12">
+                    <li class="todo-action" onclick="_DeleteTask('${
+                      element.taskID
+                    }')"
+                    >
+                      <span class="material-symbols-outlined"> delete </span>
+                    </li>
+                    <li class="todo-action" onclick="_RestoreTask('${
+                      element.taskID
+                    }')"
+                    >
+                      <span class="material-symbols-outlined"> unarchive </span>
+                    </li>
+                  </div>
+                </div>
+              </div>`;
+              } catch (error) {
+                console.log(error);
+              }
+              container.append(item);
+            });
+          }
+        }
+      })
+      .catch((err) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Unable to reach server at the moment. Please check your internet connection!",
+          footer: err.message,
+        });
+      });
+  } else {
+    if (term == "") {
+      GET_Tasks(status);
+      return;
+    }
+    Swal.fire("Cannot Search", "Search must be atleast 3 characters long!");
     return;
   }
-  fetch(`${BASE_URL}/api/user/tasks/?searchTerm=${term}&status=${status}`, {
-    method: "GET",
-    headers: {
-      Authorization: token,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((result) => {
-      return result.json();
-    })
-    .then((response) => {
-      debugger;
-      if (response.status == "Redirect")
-        window.location.pathname = "/pages/login.html";
-      else if (response.status == "FAIL") {
-        container.empty();
-        container.append("<h1>Oh no... so empty</h1>");
-      } else if (response.status == "PASS") {
-        var data = response.response;
-        container.empty();
-        if (location.pathname == "/" || location.pathname == "/index.html") {
-          $.each(data, function (index, element) {
-            try {
-              var item = `<div class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12" style="background-color: ${
-                element.color
-              }">
-          <div class="card-body">
-            <div class="image-grid">
-              ${
-                element.imageList != null
-                  ? element.imageList
-                      .map(function (IMG, index) {
-                        return `<div class="image-wrapper"><img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" /></div>`;
-                      })
-                      .join("")
-                  : ""
-              }
-            </div>
-            <div class="card-details-container">
-              <p class="card-text card-heading">${element.title}</p>
-              <p class="card-text card-desc">
-                ${element.desc}
-              </p>
-            </div>
-            <!-- ACTIONS STRIP -->
-            <div class="card-todo-action-strip col-12">
-              <li class="todo-action" onclick="_RemoveTask('${
-                element.taskID
-              }')">
-                <i class="fa fa-trash"></i>
-              </li>
-              <li class="todo-action" onclick="_ArchiveTask('${
-                element.taskID
-              }')">
-                <i class="fa fa-archive" ></i>
-              </li>
-              <li class="todo-action dropup">
-                <i class="fa fa-paint-brush" data-toggle="dropdown"></i>
-                <div
-                  class="color-palette dropdown-menu"
-                  style="position: absolute; top: 1px; z-index: 9999"
-                  tabindex="-1"
-                >
-                <div onClick="_changeColor(this,'${
-                  element.taskID
-                }')" class="bg-white"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-red"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-orange"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-yellow"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-green"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-turquoise"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-blue"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-dark-blue"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-purple"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-pink"></div>
-                  <div onClick="_changeColor(this,'${
-                    element.taskID
-                  }')" class="bg-brown"></div>
-                  <div onClick="_changeColor(this, '${
-                    element.taskID
-                  }')" class="bg-grey"></div>
-                </div>
-              </li>
-              <li class="todo-action" onclick="_CompleteTask('${
-                element.taskID
-              }')">
-                <i class="fa fa-check-circle"></i>
-              </li>
-              <btn class="todo-action" onclick="ViewTask('${element.taskID}')">
-                <i class="fa fa-pencil"></i>
-              </btn>
-            </div>
-          </div>
-              </div>`;
-            } catch (error) {
-              console.log(error);
-            }
-            container.append(item);
-          });
-        } else if (location.pathname == "/pages/trash.html") {
-          $.each(data, function (index, element) {
-            try {
-              var item = ` <div
-              class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isDeleted"
-            >
-              <div class="card-body">
-                <div class="image-grid">
-                  ${
-                    element.imageList != null
-                      ? element.imageList
-                          .map(function (IMG, index) {
-                            return `<div class="image-wrapper"><img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" /></div>`;
-                          })
-                          .join("")
-                      : ""
-                  }
-                </div>
-                <div class="card-details-container">
-                  <p class="card-text card-heading">${element.title}</p>
-                  <p class="card-text card-desc">
-                  ${element.desc}
-                  </p>
-                </div>
-                <!-- ACTIONS STRIP -->
-                <div class="card-todo-action-strip col-12">
-                  <li class="todo-action" onclick="_RestoreTask('${
-                    element.taskID
-                  }')">
-                    <span class="material-symbols-outlined">
-                      restore_from_trash
-                    </span>
-                  </li>
-                  <li class="todo-action" onclick="_DeleteTask('${
-                    element.taskID
-                  }')">
-                    <span class="material-symbols-outlined">
-                      delete_forever
-                    </span>
-                  </li>
-                </div>
-              </div>
-            </div>`;
-            } catch (error) {
-              console.log(error);
-            }
-            container.append(item);
-          });
-        } else if (location.pathname == "/pages/completed.html") {
-          $.each(data, function (index, element) {
-            try {
-              var item = `<div
-              class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isCompleted"
-            >
-              <div class="card-body">
-                <div class="image-grid">
-                  ${
-                    element.imageList != null
-                      ? element.imageList
-                          .map(function (IMG, index) {
-                            return `
-                  <div class="image-wrapper">
-                    <img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" />
-                  </div>
-                  `;
-                          })
-                          .join("")
-                      : ""
-                  }
-                </div>
-                <div class="card-details-container">
-                  <p class="card-text card-heading">${element.title}</p>
-                  <p class="card-text card-desc">${element.desc}</p>
-                </div>
-                <!-- ACTIONS STRIP -->
-                <div class="card-todo-action-strip col-12">
-                  <li
-                    class="todo-action"
-                    onclick="_DeleteTask('${element.taskID}')"
-                  >
-                    <span class="material-symbols-outlined"> delete </span>
-                  </li>
-                </div>
-              </div>
-            </div>`;
-            } catch (error) {
-              console.log(error);
-            }
-            container.append(item);
-          });
-        } else if (location.pathname == "/pages/archive.html") {
-          $.each(data, function (index, element) {
-            try {
-              var item = `<div
-              class="card shadow-lg card-todo col-md-3 col-lg-3 col-sm-12 isArchived"
-            >
-              <div class="card-body">
-                <div class="image-grid">
-                  ${
-                    element.imageList != null
-                      ? element.imageList
-                          .map(function (IMG, index) {
-                            return `
-                  <div class="image-wrapper">
-                    <img src="${BASE_URL}${IMG.imagePath}" alt="Image ${index}" />
-                  </div>
-                  `;
-                          })
-                          .join("")
-                      : ""
-                  }
-                </div>
-                <div class="card-details-container">
-                  <p class="card-text card-heading">${element.title}</p>
-                  <p class="card-text card-desc">${element.desc}</p>
-                </div>
-                <!-- ACTIONS STRIP -->
-                <!-- ACTIONS STRIP -->
-                <div class="card-todo-action-strip col-12">
-                  <li class="todo-action" onclick="_DeleteTask('${
-                    element.taskID
-                  }')"
-                  >
-                    <span class="material-symbols-outlined"> delete </span>
-                  </li>
-                  <li class="todo-action" onclick="_RestoreTask('${
-                    element.taskID
-                  }')"
-                  >
-                    <span class="material-symbols-outlined"> unarchive </span>
-                  </li>
-                </div>
-              </div>
-            </div>`;
-            } catch (error) {
-              console.log(error);
-            }
-            container.append(item);
-          });
-        }
-      }
-    })
-    .catch((err) => {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Unable to reach server at the moment. Please check your internet connection!",
-        footer: err.message,
-      });
-    });
 };
+
+// GETS THE CURRENT SELECTED COLOR IN ADD TASK MODAL AND SETS IT TO MODAL BACKGROUND
+var selectElement = document.getElementById("todoColor");
+var colorNameElement = document.getElementById("modalCont");
+selectElement.addEventListener("change", function () {
+  var selectedColor = selectElement.value;
+  colorNameElement.style.backgroundColor = selectedColor;
+});

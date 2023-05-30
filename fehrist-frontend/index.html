@@ -82,11 +82,15 @@
           <!-- SEARCH BAR -->
           <div class="inner-form">
             <div class="serch-field">
-              
               <button class="btn-search" type="button" id="SearchBtn">
                 <i class="fa fa-search"></i>
               </button>
-              <input id="SearchBox" type="text" placeholder="A big brown fox..." value="" />
+              <input
+                id="SearchBox"
+                type="text"
+                placeholder="A big brown fox..."
+                value=""
+              />
             </div>
           </div>
         </div>
@@ -115,12 +119,11 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <div class="modal-body">
+              <div class="modal-body" id="ModalBody">
                 <!-- IMAGE BOX -->
                 <div id="imageContainer">
                   <!-- Selected Images will be added here -->
                 </div>
-
                 <input
                   type="text"
                   class="form-control"
@@ -138,19 +141,20 @@
                 <div class="form-group">
                   <select class="form-control" id="todoColor">
                     <option value="0">Select a color</option>
-                    <option value="#FFFFFF">White</option>
-                    <option value="#F28B82">Red</option>
-                    <option value="#FBBC04">Orange</option>
-                    <option value="#FFF475">Yellow</option>
-                    <option value="#CCFF90">Green</option>
-                    <option value="#A7FFEB">Turquoise</option>
-                    <option value="#CBF0F8">Blue</option>
-                    <option value="#AECBFA">Dark Blue</option>
-                    <option value="#D7AEFB">Purple</option>
-                    <option value="#FDCFE8">Pink</option>
-                    <option value="#E6C9A8">Brown</option>
-                    <option value="#E8EAED">Grey</option>
+                    <option style="background-color:#FFFFFF ;" value="#FFFFFF">White</option>
+                    <option style="background-color:#F28B82 ;" value="#F28B82">Red</option>
+                    <option style="background-color:#FBBC04 ;" value="#FBBC04">Orange</option>
+                    <option style="background-color:#FFF475 ;" value="#FFF475">Yellow</option>
+                    <option style="background-color:#CCFF90 ;" value="#CCFF90">Green</option>
+                    <option style="background-color:#A7FFEB ;" value="#A7FFEB">Turquoise</option>
+                    <option style="background-color:#CBF0F8 ;" value="#CBF0F8">Blue</option>
+                    <option style="background-color:#AECBFA ;" value="#AECBFA">Dark Blue</option>
+                    <option style="background-color:#D7AEFB ;" value="#D7AEFB">Purple</option>
+                    <option style="background-color:#FDCFE8 ;" value="#FDCFE8">Pink</option>
+                    <option style="background-color:#E6C9A8 ;" value="#E6C9A8">Brown</option>
+                    <option style="background-color:#E8EAED ;" value="#E8EAED">Grey</option>
                   </select>
+
                   <div class="form-group">
                     <label>Due Date</label>
                     <input
@@ -186,7 +190,7 @@
                   Cancel
                 </button>
                 <button type="button" class="btn btn-primary" id="AddTaskBtn">
-                  <i class="fa fa-spinner" id="LoadingIcon" ></i>
+                  <i class="fa fa-spinner" id="LoadingIcon"></i>
                   Done
                 </button>
               </div>
@@ -201,7 +205,7 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
       // TODO: Add SDKs for Firebase products that you want to use
       // https://firebase.google.com/docs/web/setup#available-libraries
-    
+
       // Your web app's Firebase configuration
       const firebaseConfig = {
         apiKey: "AIzaSyABAnQOwYuzSbpUM6VoXSGjGhgF4eqqwLw",
@@ -209,20 +213,19 @@
         projectId: "fehrist-10618",
         storageBucket: "fehrist-10618.appspot.com",
         messagingSenderId: "707737493973",
-        appId: "1:707737493973:web:a89b75d19dc5ffd02fdd5c"
+        appId: "1:707737493973:web:a89b75d19dc5ffd02fdd5c",
       };
-    
+
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
     </script>
 
-<script src="/js/checkAuth.js"></script>
+    <script src="/js/checkAuth.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/popper.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/script.js"></script>
-    
     <script src="js/moment.js"></script>
   </body>
 </html>
