@@ -2,3 +2,5 @@ checklist
 at least 3 characters before search
 merge manual to readme
 liquiBase
+Testing
+Comments
