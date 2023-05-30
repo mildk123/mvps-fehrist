@@ -141,18 +141,42 @@
                 <div class="form-group">
                   <select class="form-control" id="todoColor">
                     <option value="0">Select a color</option>
-                    <option style="background-color:#FFFFFF ;" value="#FFFFFF">White</option>
-                    <option style="background-color:#F28B82 ;" value="#F28B82">Red</option>
-                    <option style="background-color:#FBBC04 ;" value="#FBBC04">Orange</option>
-                    <option style="background-color:#FFF475 ;" value="#FFF475">Yellow</option>
-                    <option style="background-color:#CCFF90 ;" value="#CCFF90">Green</option>
-                    <option style="background-color:#A7FFEB ;" value="#A7FFEB">Turquoise</option>
-                    <option style="background-color:#CBF0F8 ;" value="#CBF0F8">Blue</option>
-                    <option style="background-color:#AECBFA ;" value="#AECBFA">Dark Blue</option>
-                    <option style="background-color:#D7AEFB ;" value="#D7AEFB">Purple</option>
-                    <option style="background-color:#FDCFE8 ;" value="#FDCFE8">Pink</option>
-                    <option style="background-color:#E6C9A8 ;" value="#E6C9A8">Brown</option>
-                    <option style="background-color:#E8EAED ;" value="#E8EAED">Grey</option>
+                    <option style="background-color: #ffffff" value="#FFFFFF">
+                      White
+                    </option>
+                    <option style="background-color: #f28b82" value="#F28B82">
+                      Red
+                    </option>
+                    <option style="background-color: #fbbc04" value="#FBBC04">
+                      Orange
+                    </option>
+                    <option style="background-color: #fff475" value="#FFF475">
+                      Yellow
+                    </option>
+                    <option style="background-color: #ccff90" value="#CCFF90">
+                      Green
+                    </option>
+                    <option style="background-color: #a7ffeb" value="#A7FFEB">
+                      Turquoise
+                    </option>
+                    <option style="background-color: #cbf0f8" value="#CBF0F8">
+                      Blue
+                    </option>
+                    <option style="background-color: #aecbfa" value="#AECBFA">
+                      Dark Blue
+                    </option>
+                    <option style="background-color: #d7aefb" value="#D7AEFB">
+                      Purple
+                    </option>
+                    <option style="background-color: #fdcfe8" value="#FDCFE8">
+                      Pink
+                    </option>
+                    <option style="background-color: #e6c9a8" value="#E6C9A8">
+                      Brown
+                    </option>
+                    <option style="background-color: #e8eaed" value="#E8EAED">
+                      Grey
+                    </option>
                   </select>
 
                   <div class="form-group">
@@ -164,7 +188,30 @@
                     />
                   </div>
                 </div>
+                <hr />
+
+                <div id="checklistContainer">
+                  <label> Checklist</label>
+                  <div
+                    class="form-group checklistItem d-flex align-items-center"
+                  >
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="checklistItem"
+                      placeholder="Checklist Item"
+                    />
+                    <button class="btn btn-danger deleteChecklistItem">
+                      <i class="fa fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <button class="btn btn-secondary" id="addChecklistItem">
+                  <i class="fa fa-plus"></i>
+                </button>
               </div>
+
               <div class="modal-footer">
                 <div>
                   <label id="taskID"></label>

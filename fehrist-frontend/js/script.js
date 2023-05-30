@@ -278,6 +278,7 @@ $("#BtnLogout").click(function (e) {
 // HOME
 var imageList = []; // THIS LIST MAINTAINES THE IMAGES FETCHED FROM DB TO UNTIL VIEWED ON MODAL
 var prevImageList = []; // THIS LIST MAINTAINES THE IMAGES FETCHED FROM DB THAT ARE RETURN TO DB INCASE OF UPDATE TASK
+var checklistItems = [];
 
 // EVENT HANDLING TO ADD IMAGES IN NEW TO-DO
 $("#todoImage").on("change", function () {
@@ -335,6 +336,13 @@ $("#SearchBox").on("change", () => {
   }
 });
 
+GetCheckList = () => {
+  $('.checklistItem input[name="checklistItem"]').each(function () {
+    var itemText = $(this).val();
+    checklistItems.push(itemText);
+  });
+};
+
 // OPEN ADD TASK MODAL AFTER CLEARING ANY PREVIOUS STORED VALUES
 AddTaskModal = () => {
   $("#taskID").empty();
@@ -345,6 +353,7 @@ AddTaskModal = () => {
   $("#imageContainer").empty();
   imageList = [];
   prevImageList = [];
+  checklistItems = [];
   $("#addTODOModal").modal("toggle");
 };
 // METHOD TO REMOVE IMAGE FROM ADDED LIST TO ADD TASK MODEL BY X BUTTON
@@ -353,6 +362,28 @@ _RemoveImage = (context, index) => {
   prevImageList.splice(index, 1);
   context.parentNode.remove();
 };
+
+// ADD CHECK LIST ITEM
+$("#addChecklistItem").click(function () {
+  var checklistItem =
+    $(` <div class="form-group checklistItem d-flex align-items-center">
+  <input
+    type="text"
+    class="form-control"
+    name="checklistItem"
+    placeholder="Checklist Item"
+  />
+  <button class="btn btn-danger deleteChecklistItem">
+    <i class="fa fa-times"></i>
+  </button>
+</div>`);
+  $("#checklistContainer").append(checklistItem);
+});
+
+// Delete checklist item
+$(document).on("click", ".deleteChecklistItem", function () {
+  $(this).closest(".checklistItem").remove();
+});
 
 // BASE FUNCTION TO SAVE TASK TO DB
 SET_Task = () => {
@@ -365,6 +396,7 @@ SET_Task = () => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
   var token = "Bearer " + cookieValue.token.data;
+  GetCheckList();
 
   var formdata = new FormData();
   formdata.append("T_TASKID", taskID);
@@ -375,6 +407,8 @@ SET_Task = () => {
   formdata.append("T_DUE_DATE_TIME", dueDateTime);
   formdata.append("T_ADDED_DATE_TIME", new Date().toISOString().slice(0, 16));
   formdata.append("T_PREV_IMAGE", JSON.stringify(prevImageList));
+  formdata.append("T_CHECKLIST", JSON.stringify(checklistItems));
+
   imageList.forEach((image) => {
     formdata.append(`Files[${count}]`, image);
     count++;
@@ -413,6 +447,9 @@ SET_Task = () => {
     })
     .finally(() => {
       $("#LoadingIcon").css("display", "none");
+      imageList = [];
+      checklistItems = [];
+      prevImageList = [];
     });
 };
 
@@ -715,6 +752,7 @@ ViewTask = (taskID) => {
         var imageContainer = $("#imageContainer");
         imageContainer.empty();
         prevImageList = [];
+        checklistItems = [];
         var data = response.response;
         $("#taskID").text(data.taskID);
         $("#todoTitle").val(data.title);
