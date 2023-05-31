@@ -805,6 +805,7 @@ ViewTask = (taskID) => {
     });
 };
 
+// FUNCTION TO DELETE CHECKLIST ITEM FROM DB
 RemoveCheckDB = (checkID) => {
   var userProfile = document.cookie;
   var cookieValue = JSON.parse(userProfile.split("=")[1]);
