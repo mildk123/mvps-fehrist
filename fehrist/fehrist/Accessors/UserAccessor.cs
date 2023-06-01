@@ -20,13 +20,16 @@ namespace fehrist.Accessors
 
         public int GET_RoleID(string v)
         {
+            // Retrieve the role with the given name from the database
             var roleName = DB.ROLES.Where(x => x.NAME == v).FirstOrDefault();
             if (roleName != null)
             {
+                // Return the role ID if found
                 return roleName.ROLEID;
             }
             else
             {
+                // Return 0 if the role is not found
                 return 0;
             }
         }
@@ -35,6 +38,7 @@ namespace fehrist.Accessors
         {
             try
             {
+                // Create a new user account object
                 ACCOUNT newAcc = new ACCOUNT()
                 {
                     NAME = name,
@@ -43,36 +47,40 @@ namespace fehrist.Accessors
                     EMAIL = email,
                     ROLEID = roleID,
                 };
+                // Add the new account to the database
                 DB.ACCOUNTS.Add(newAcc);
                 DB.SaveChanges();
+                // Return the newly created account
                 return newAcc;
             }
             catch (DbUpdateException)
             {
-
+                // Return null if there is an exception during database update
                 return null;
             }
-
-
         }
 
         public string GET_UserHash(string email)
         {
             try
             {
+                // Retrieve the user account with the given email from the database
                 var userAccount = DB.ACCOUNTS.Where(x => x.EMAIL == email).FirstOrDefault();
                 if (userAccount != null)
                 {
+                    // Return the password hash of the user account
                     return userAccount.PASS;
                 }
                 else
                 {
+                    // Return null if the user account is not found
                     return null;
                 }
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Console.Write(e);
+                // Return null if there is an exception
                 return null;
             }
         }
@@ -81,18 +89,22 @@ namespace fehrist.Accessors
         {
             try
             {
+                // Retrieve the user account with the given email from the database
                 var userAccount = DB.ACCOUNTS.Where(x => x.EMAIL == email).FirstOrDefault();
                 if (userAccount != null)
                 {
+                    // Return the user account
                     return userAccount;
                 }
                 else
                 {
+                    // Return null if the user account is not found
                     return null;
                 }
             }
             catch (Exception)
             {
+                // Return null if there is an exception
                 return null;
             }
         }
@@ -100,7 +112,10 @@ namespace fehrist.Accessors
         public List<GET_AllTasksResponse> GET_Tasks(int accID, string status)
         {
             var statusUp = status.ToUpper();
+
+            // Retrieve all tasks matching the specified account ID and status
             var allTasks = DB.TASKS.Where(x => x.ACCOUNTID == accID && x.T_STATUS == statusUp).ToList();
+
             if (allTasks != null)
             {
                 List<GET_AllTasksResponse> taskList = new List<GET_AllTasksResponse>();
@@ -117,9 +132,11 @@ namespace fehrist.Accessors
 
                     // Retrieve the associated images for the current task
                     var taskImages = DB.TASK_IMAGES.Where(i => i.TASKID == task.TASKID).ToList();
+
                     if (taskImages != null)
                     {
                         List<ImagesModel> imgs = new List<ImagesModel>();
+
                         foreach (var item in taskImages)
                         {
                             ImagesModel img = new ImagesModel()
@@ -127,8 +144,10 @@ namespace fehrist.Accessors
                                 imageID = item.IMAGEID,
                                 imagePath = item.TI_PATH
                             };
+
                             imgs.Add(img);
                         }
+
                         taskResponse.imageList = imgs;
                     }
 
@@ -145,20 +164,21 @@ namespace fehrist.Accessors
 
         public GET_AllTasksResponse GET_Task_Single(int accID, int taskID)
         {
-            var selectedTask = DB.TASKS.Where(x => x.ACCOUNTID == accID && x.TASKID == taskID).FirstOrDefault();
-            if (selectedTask != null)
+            // Retrieve a single task for the given account ID and task ID from the database
+            var singleTask = DB.TASKS.FirstOrDefault(x => x.ACCOUNTID == accID && x.TASKID == taskID);
+            if (singleTask != null)
             {
                 GET_AllTasksResponse taskResponse = new GET_AllTasksResponse
                 {
-                    taskID = selectedTask.TASKID,
-                    title = selectedTask.T_TITLE,
-                    desc = selectedTask.T_DESC,
-                    color = selectedTask.T_COLOR,
-                    dueDate = selectedTask.T_DUE_DATE_TIME
+                    taskID = singleTask.TASKID,
+                    title = singleTask.T_TITLE,
+                    desc = singleTask.T_DESC,
+                    color = singleTask.T_COLOR,
+                    dueDate = singleTask.T_DUE_DATE_TIME
                 };
 
-                // Retrieve the associated images for the current task
-                var taskImages = DB.TASK_IMAGES.Where(i => i.TASKID == selectedTask.TASKID).ToList();
+                // Retrieve the associated images for the task
+                var taskImages = DB.TASK_IMAGES.Where(i => i.TASKID == singleTask.TASKID).ToList();
                 if (taskImages != null)
                 {
                     List<ImagesModel> imgs = new List<ImagesModel>();
@@ -169,30 +189,38 @@ namespace fehrist.Accessors
                             imageID = item.IMAGEID,
                             imagePath = item.TI_PATH
                         };
+                        // Add the image to the image list
                         imgs.Add(img);
                     }
+                    // Add the image list to the task response
                     taskResponse.imageList = imgs;
                 }
 
-                var checks = DB.CHECKLISTs.Where(x => x.TASKID == selectedTask.TASKID).ToList();
-                if (checks != null)
+                // Retrieve the associated checklist items for the task
+                var taskChecklist = DB.CHECKLISTs.Where(c => c.TASKID == singleTask.TASKID).ToList();
+                if (taskChecklist != null)
                 {
-                    List<ChecklistResponse> checkListUser = new List<ChecklistResponse>();
-                    foreach (var item in checks)
+                    List<ChecklistResponse> checklist = new List<ChecklistResponse>();
+                    foreach (var item in taskChecklist)
                     {
-                        ChecklistResponse checkITEM = new ChecklistResponse()
+                        ChecklistResponse chk = new ChecklistResponse()
                         {
                             checkID = item.CHECKID,
                             desc = item.CL_DESCRIPTION
                         };
-                        checkListUser.Add(checkITEM);
+                        // Add the checklist item to the checklist
+                        checklist.Add(chk);
                     }
-                    taskResponse.checkList = checkListUser;
+                    // Add the checklist to the task response
+                    taskResponse.checkList = checklist;
                 }
+
+                // Return the task response
                 return taskResponse;
             }
             else
             {
+                // Return null if the task is not found
                 return null;
             }
         }
@@ -214,6 +242,8 @@ namespace fehrist.Accessors
                 };
                 DB.TASKS.Add(newTask);
                 DB.SaveChanges();
+
+                // Save the attached images for the new task
                 for (int i = 0; i < filesList.Count; i++)
                 {
                     var file = filesList[i];
@@ -237,10 +267,10 @@ namespace fehrist.Accessors
                     }
                 }
 
-
                 var serializer = new JavaScriptSerializer();
                 var checkListRec = serializer.Deserialize<List<string>>(checkList);
 
+                // Save the checklist items for the new task
                 if (checkListRec != null)
                 {
                     foreach (var item in checkListRec)
@@ -257,6 +287,7 @@ namespace fehrist.Accessors
                     }
                     DB.SaveChanges();
                 }
+
                 return "Successfully saved task";
             }
             else
@@ -272,6 +303,8 @@ namespace fehrist.Accessors
                     updateTask.TASK_IMAGES.Clear();
                     DB.CHECKLISTs.RemoveRange(updateTask.CHECKLISTs.Select(ti => ti));
                     DB.SaveChanges();
+
+                    // Save the attached images for the updated task
                     for (int i = 0; i < filesList.Count; i++)
                     {
                         var file = filesList[i];
@@ -291,12 +324,13 @@ namespace fehrist.Accessors
                                 TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null
                             };
                             DB.TASK_IMAGES.Add(newImage);
-
                         }
                     }
+
                     var serializer = new JavaScriptSerializer();
                     var checkListRec = serializer.Deserialize<List<string>>(checkList);
 
+                    // Save the checklist items for the updated task
                     if (checkListRec != null)
                     {
                         foreach (var item in checkListRec)
@@ -313,35 +347,37 @@ namespace fehrist.Accessors
                         }
                         DB.SaveChanges();
                     }
-                    DB.SaveChanges();
 
                     return "Successfully updated task";
-
                 }
                 else
                 {
                     return null;
                 }
             }
-
         }
+
 
         public string UPDATE_TaskImage(int accID, int taskID, string title, string desc, string status, string color, string dueDate, string addedDate, List<HttpPostedFile> filesList, string previmages, string checkList)
         {
-            // UPDATE OLD TASK WTIH CHANGE IN IMAGES
+            // Update an existing task with changes in images
             var updateTask = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
             if (updateTask != null)
             {
+                // Update the task properties
                 updateTask.T_COLOR = color;
                 updateTask.T_TITLE = title;
                 updateTask.T_DESC = desc;
                 updateTask.T_DUE_DATE_TIME = dueDate;
+
+                // Clear the existing task images and checklist items
                 updateTask.TASK_IMAGES.Clear();
                 DB.CHECKLISTs.RemoveRange(updateTask.CHECKLISTs.Select(ti => ti));
+
+                // Save the changes to the database
                 DB.SaveChanges();
 
-
-
+                // Process the new image files and add them to the task
                 for (int i = 0; i < filesList.Count; i++)
                 {
                     var file = filesList[i];
@@ -355,18 +391,21 @@ namespace fehrist.Accessors
                         var path = Path.Combine(HttpContext.Current.Server.MapPath($@"~/storage/images/{accID}/"), fileName);
                         file.SaveAs(path);
 
+                        // Create a new task image object
                         TASK_IMAGES newImage = new TASK_IMAGES()
                         {
                             TASKID = updateTask.TASKID,
                             TI_PATH = file != null ? $"/storage/images/{accID}/" + file.FileName : null
                         };
+                        // Add the image to the task
                         DB.TASK_IMAGES.Add(newImage);
-
                     }
                 }
+
                 var serializer = new JavaScriptSerializer();
                 var fetched = serializer.Deserialize<List<ImagesModel>>(previmages);
 
+                // Update the existing task images
                 if (fetched != null)
                 {
                     foreach (var item in fetched)
@@ -376,16 +415,17 @@ namespace fehrist.Accessors
                         {
                             instanceFound.TASKID = taskID;
                         }
-                        //DB.SaveChanges();
                     }
                     DB.SaveChanges();
                 }
 
+                // Process the checklist items and add them to the task
                 var checkListRec = serializer.Deserialize<List<string>>(checkList);
                 if (checkListRec != null)
                 {
                     foreach (var item in checkListRec)
                     {
+                        // Create a new checklist item
                         CHECKLIST newCheck = new CHECKLIST()
                         {
                             CL_DESCRIPTION = item.ToString(),
@@ -393,14 +433,15 @@ namespace fehrist.Accessors
                             DATE_UPDATED = DateTime.Now,
                             UPDATE_BY = accID.ToString()
                         };
+                        // Add the checklist item to the task
                         DB.CHECKLISTs.Add(newCheck);
                         DB.SaveChanges();
                     }
                     DB.SaveChanges();
+
                 }
 
                 return "Successfully updated task";
-
             }
             else
             {
@@ -412,11 +453,10 @@ namespace fehrist.Accessors
         {
             try
             {
+                // Retrieve and delete a checklist item
                 var checkITEM = DB.CHECKLISTs.Where(x => x.CHECKID == checkID && x.TASK.ACCOUNTID == accID).FirstOrDefault();
                 if (checkITEM != null)
                 {
-
-
                     DB.CHECKLISTs.Remove(checkITEM);
                     DB.SaveChanges();
                     return "Successfully removed checklist";
@@ -425,7 +465,6 @@ namespace fehrist.Accessors
                 {
                     return "Checklist not found.";
                 }
-
             }
             catch (Exception)
             {
@@ -437,22 +476,25 @@ namespace fehrist.Accessors
         {
             try
             {
+                // Retrieve and delete a task
                 var task = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
                 if (task != null)
                 {
-
+                    // Retrieve and delete the task images associated with the task
                     var taskImages = DB.TASK_IMAGES.Where(x => x.TASKID == taskID).ToList();
                     if (taskImages.Count > 0)
                     {
                         DB.TASK_IMAGES.RemoveRange(taskImages);
                     }
 
+                    // Retrieve and delete the checklist items associated with the task
                     var taskChecks = DB.CHECKLISTs.Where(x => x.TASKID == taskID).ToList();
                     if (taskChecks.Count > 0)
                     {
                         DB.CHECKLISTs.RemoveRange(taskChecks);
                     }
 
+                    // Remove the task from the database
                     DB.TASKS.Remove(task);
                     DB.SaveChanges();
                     return "Successfully removed task";
@@ -461,70 +503,74 @@ namespace fehrist.Accessors
                 {
                     return "Task not found.";
                 }
-
             }
             catch (Exception)
             {
                 return null;
             }
         }
-        
+
         public string UPDATE_Task_Status(int taskID, int accID, string status)
         {
             try
             {
+                // Retrieve and update the status of a task
                 var taskSelected = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
                 if (taskSelected != null)
                 {
+                    // Update the task status
                     taskSelected.T_STATUS = status.ToUpper();
                     DB.SaveChanges();
-                    return "Sucessfully chaned status of task";
+                    return "Successfully changed status of task";
                 }
                 else
                 {
-                    return "The selected task does not exists anymore.";
+                    return "The selected task does not exist anymore.";
                 }
             }
             catch (Exception)
             {
-                return "An error occured while updating current task. Please login again refresh the caches.";
+                return "An error occurred while updating the current task. Please log in again and refresh the caches.";
             }
-
         }
 
         public string UPDATE_Task_Color(int taskID, int accID, string color)
         {
             try
             {
+                // Retrieve and update the color of a task
                 var taskSelected = DB.TASKS.Where(x => x.TASKID == taskID && x.ACCOUNTID == accID).FirstOrDefault();
                 if (taskSelected != null)
                 {
+                    // Update the task color
                     taskSelected.T_COLOR = color.ToUpper();
                     DB.SaveChanges();
-                    return "Sucessfully changed color of task";
+                    return "Successfully changed color of task";
                 }
                 else
                 {
-                    return "The selected task does not exists anymore.";
+                    return "The selected task does not exist anymore.";
                 }
             }
             catch (Exception)
             {
-                return "An error occured while updating current task. Please login again refresh the caches.";
+                return "An error occurred while updating the current task. Please log in again and refresh the caches.";
             }
-
         }
 
         public List<GET_AllTasksResponse> SEARCH_Tasks(int accID, string searchTerm, string status)
         {
+            // Convert the search term to lowercase and the status to uppercase
             var termLower = searchTerm == null ? "*" : searchTerm.ToLower();
             var statusUpper = status.ToUpper();
 
+            // Retrieve tasks that match the search term and status for the specified account
             var allTasks = DB.TASKS.Where(x => x.ACCOUNTID == accID &&
-    ((x.T_STATUS == statusUpper && x.T_TITLE.Contains(termLower)) ||
-    (x.T_STATUS == statusUpper && x.T_DESC.Contains(termLower))) &&
-    x.ACCOUNTID == accID
-).ToList();
+                ((x.T_STATUS == statusUpper && x.T_TITLE.Contains(termLower)) ||
+                (x.T_STATUS == statusUpper && x.T_DESC.Contains(termLower))) &&
+                x.ACCOUNTID == accID
+            ).ToList();
+
             if (allTasks.Count != 0)
             {
                 List<GET_AllTasksResponse> taskList = new List<GET_AllTasksResponse>();
@@ -565,6 +611,7 @@ namespace fehrist.Accessors
                 return null;
             }
         }
+
 
     }
 }
