@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\xunit.core.2.3.1\build\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.3.1\build\xunit.core.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -27,6 +26,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -337,9 +337,16 @@
     <Compile Include="Helper\ImagesModel.cs" />
     <Compile Include="Helper\token_handler.cs" />
     <Compile Include="Helper\UserHelpers.cs" />
-    <Compile Include="Models\ACCOUNT.cs">
-      <DependentUpon>FehristDB.tt</DependentUpon>
+    <Compile Include="Migrations\202306011638344_create-database.cs" />
+    <Compile Include="Migrations\202306011638344_create-database.Designer.cs">
+      <DependentUpon>202306011638344_create-database.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202306011641287_remove-phone-column-from-accounts.cs" />
+    <Compile Include="Migrations\202306011641287_remove-phone-column-from-accounts.Designer.cs">
+      <DependentUpon>202306011641287_remove-phone-column-from-accounts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ACCOUNT.cs" />
     <Compile Include="Models\API Models\GenericResponseModel.cs" />
     <Compile Include="Models\API Models\Request\User\LoginRequest.cs" />
     <Compile Include="Models\API Models\Request\User\RegistrationRequest.cs" />
@@ -351,33 +358,11 @@
     <Compile Include="Models\API Models\Response\User\GET_AllTasksResponse.cs" />
     <Compile Include="Models\API Models\Response\User\LoginResponse.cs" />
     <Compile Include="Models\API Models\Response\User\RegistrationResponse.cs" />
-    <Compile Include="Models\CHECKLIST.cs">
-      <DependentUpon>FehristDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\FehristDB.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>FehristDB.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\FehristDB.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>FehristDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\FehristDB.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>FehristDB.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\ROLE.cs">
-      <DependentUpon>FehristDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TASK.cs">
-      <DependentUpon>FehristDB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\TASK_IMAGES.cs">
-      <DependentUpon>FehristDB.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\CHECKLIST.cs" />
+    <Compile Include="Models\FehristDB.cs" />
+    <Compile Include="Models\ROLE.cs" />
+    <Compile Include="Models\TASK.cs" />
+    <Compile Include="Models\TASK_IMAGES.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\UserServices.cs" />
     <Compile Include="Startup.cs" />
@@ -389,16 +374,6 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Models\FehristDB.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>FehristDB.edmx</DependentUpon>
-      <LastGenOutput>FehristDB.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\FehristDB.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>FehristDB.edmx</DependentUpon>
-      <LastGenOutput>FehristDB.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -424,13 +399,6 @@
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <EntityDeploy Include="Models\FehristDB.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>FehristDB.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\FehristDB.edmx.diagram">
-      <DependentUpon>FehristDB.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\Folder Build.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -469,8 +437,12 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\xunit.analyzers.1.0.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
-    <Analyzer Include="..\packages\xunit.analyzers.1.0.0\analyzers\dotnet\cs\xunit.analyzers.fixes.dll" />
+    <EmbeddedResource Include="Migrations\202306011638344_create-database.resx">
+      <DependentUpon>202306011638344_create-database.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202306011641287_remove-phone-column-from-accounts.resx">
+      <DependentUpon>202306011641287_remove-phone-column-from-accounts.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -506,10 +478,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-    <Error Condition="!Exists('..\packages\xunit.core.2.3.1\build\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.3.1\build\xunit.core.props'))" />
-    <Error Condition="!Exists('..\packages\xunit.core.2.3.1\build\xunit.core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.3.1\build\xunit.core.targets'))" />
   </Target>
-  <Import Project="..\packages\xunit.core.2.3.1\build\xunit.core.targets" Condition="Exists('..\packages\xunit.core.2.3.1\build\xunit.core.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

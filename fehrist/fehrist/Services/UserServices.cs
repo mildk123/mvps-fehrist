@@ -63,7 +63,6 @@ namespace fehrist.Services
                                 accountID = result.ACCOUNTID,
                                 name = result.NAME,
                                 email = result.EMAIL,
-                                phone = result.PHONE,
                                 status = result.AC_STATUS
                             };
                             var userToken = tokenObj.GetUserToken(userLogin.roleID, userLogin.roleName, userLogin.accountID, userLogin.name, userLogin.email, userLogin.phone, userLogin.status);
@@ -144,7 +143,6 @@ namespace fehrist.Services
                                 accountID = result.ACCOUNTID,
                                 name = result.NAME,
                                 email = result.EMAIL,
-                                phone = result.PHONE,
                                 status = result.AC_STATUS
                             };
                             var userToken = tokenObj.GetUserToken(userRegister.roleID, userRegister.roleName, userRegister.accountID, userRegister.name, userRegister.email, userRegister.phone, userRegister.status);

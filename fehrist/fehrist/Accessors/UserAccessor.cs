@@ -447,6 +447,12 @@ namespace fehrist.Accessors
                         DB.TASK_IMAGES.RemoveRange(taskImages);
                     }
 
+                    var taskChecks = DB.CHECKLISTs.Where(x => x.TASKID == taskID).ToList();
+                    if (taskChecks.Count > 0)
+                    {
+                        DB.CHECKLISTs.RemoveRange(taskChecks);
+                    }
+
                     DB.TASKS.Remove(task);
                     DB.SaveChanges();
                     return "Successfully removed task";
