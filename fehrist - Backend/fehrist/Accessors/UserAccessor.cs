@@ -357,7 +357,6 @@ namespace fehrist.Accessors
             }
         }
 
-
         public string UPDATE_TaskImage(int accID, int taskID, string title, string desc, string status, string color, string dueDate, string addedDate, List<HttpPostedFile> filesList, string previmages, string checkList)
         {
             // Update an existing task with changes in images

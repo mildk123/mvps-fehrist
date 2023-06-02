@@ -1,7 +1,7 @@
 ----------------------------------------- Checklist
 ----------------------------------------- At least 3 characters before search.
 ----------------------------------------- Merge manual to readme.
-liquiBase
+----------------------------------------- Database Change management
 Testing
---------------- Comments
+----------------------------------------- Comments
 ----------------------------------------- ADD COLOR TO COLOR MENU

@@ -25,6 +25,14 @@ You should see the application running in your default web browser.
 
 Thank you for choosing our Fehrist! This user manual will guide you through the various features and functionalities of our platform, helping you stay organized and productive. Let's get started!
 
+**0. Set-Up:**
+
+`1`- Open fehrist-Frontend in VS CODE as a folder and run project using extension Live Server by Ritwick Dey. This will deploy frontend to localhost.
+
+`2`- Open fehrist-backend in Visual Studio (Community) and press the launch button. Make sure all the neccessary framework and tools are avaialbe. This will host the backend to localhost:port number.
+
+`3` - Verify the PORT number in CheckAuth.js, scripts.js in frontend/js variable BASE_URl, incase both are not the same replace the port number in BASE_URL variable.
+
 **1. Authentication:**
 
 `1`- To access the Fehrist, you must authenticate yourself. You have three options: Google, Facebook, or email ID.
