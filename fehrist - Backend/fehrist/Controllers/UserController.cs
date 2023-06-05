@@ -20,7 +20,7 @@ namespace fehrist.Controllers
         // CONTROLLER TO VERIFIY JWT TOKEN 
         [HttpPost]
         [Route("api/token/verify")]
-        public IHttpActionResult GET_TokenVerification()
+        public virtual IHttpActionResult GET_TokenVerification()
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -36,14 +36,14 @@ namespace fehrist.Controllers
             }
             else
             {
-                return BadRequest("invalid"); // Status code 400 Bad Request
+                return Content(HttpStatusCode.BadRequest, "invalid"); // Status code 400 Unauthorized
             }
         }
 
         // CONTROLLER TO GET ALL TO-DO
         [HttpGet]
         [Route("api/user/tasks")]
-        public IHttpActionResult GET_Tasks([FromUri] string state)
+        public virtual IHttpActionResult GET_Tasks([FromUri] string state)
         {
             if (User.Identity.IsAuthenticated)
             {

@@ -11,7 +11,7 @@ namespace fehrist.Helper
 {
     public class token_handler
     {
-        public Object GetUserToken(int? roleID, string roleName, int accountID, string name, string email, string phone, string status)
+        public virtual Object GetUserToken(int? roleID, string roleName, int accountID, string name, string email, string status)
         {
             string key = "kiet_Secretkey_10664noorahmed10618"; //Secret key which will be used later during validation    
             var issuer = "https://www.fyp-kiet.somee.com";  //normally this will be your site URL    

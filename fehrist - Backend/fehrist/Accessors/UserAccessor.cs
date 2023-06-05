@@ -16,9 +16,9 @@ namespace fehrist.Accessors
 {
     public class UserAccessor
     {
-        DBEntities DB = new DBEntities();
+        private DBEntities DB = new DBEntities();
 
-        public int GET_RoleID(string v)
+        public virtual int GET_RoleID(string v)
         {
             // Retrieve the role with the given name from the database
             var roleName = DB.ROLES.Where(x => x.NAME == v).FirstOrDefault();
@@ -34,33 +34,7 @@ namespace fehrist.Accessors
             }
         }
 
-        public ACCOUNT SET_UserAccount(string name, string email, string passwordHash, int roleID)
-        {
-            try
-            {
-                // Create a new user account object
-                ACCOUNT newAcc = new ACCOUNT()
-                {
-                    NAME = name,
-                    PASS = passwordHash,
-                    AC_STATUS = "ACTIVE",
-                    EMAIL = email,
-                    ROLEID = roleID,
-                };
-                // Add the new account to the database
-                DB.ACCOUNTS.Add(newAcc);
-                DB.SaveChanges();
-                // Return the newly created account
-                return newAcc;
-            }
-            catch (DbUpdateException)
-            {
-                // Return null if there is an exception during database update
-                return null;
-            }
-        }
-
-        public string GET_UserHash(string email)
+        public  virtual string GET_UserHash(string email)
         {
             try
             {
@@ -85,7 +59,7 @@ namespace fehrist.Accessors
             }
         }
 
-        public ACCOUNT Get_UserAccount(string email)
+        public virtual  ACCOUNT Get_UserAccount(string email)
         {
             try
             {
@@ -109,6 +83,37 @@ namespace fehrist.Accessors
             }
         }
 
+        public ACCOUNT SET_UserAccount(string name, string email, string passwordHash, int roleID)
+        {
+            try
+            {
+                var alreadyExists = DB.ACCOUNTS.Where(x => x.EMAIL == email).FirstOrDefault();
+                if (alreadyExists != null)
+                {
+                    return null;
+                }
+                // Create a new user account object
+                ACCOUNT newAcc = new ACCOUNT()
+                {
+                    NAME = name,
+                    PASS = passwordHash,
+                    AC_STATUS = "ACTIVE",
+                    EMAIL = email,
+                    ROLEID = roleID,
+                };
+                // Add the new account to the database
+                DB.ACCOUNTS.Add(newAcc);
+                DB.SaveChanges();
+                // Return the newly created account
+                return newAcc;
+            }
+            catch (DbUpdateException)
+            {
+                // Return null if there is an exception during database update
+                return null;
+            }
+        }
+
         public List<GET_AllTasksResponse> GET_Tasks(int accID, string status)
         {
             var statusUp = status.ToUpper();
@@ -116,7 +121,7 @@ namespace fehrist.Accessors
             // Retrieve all tasks matching the specified account ID and status
             var allTasks = DB.TASKS.Where(x => x.ACCOUNTID == accID && x.T_STATUS == statusUp).ToList();
 
-            if (allTasks != null)
+            if (allTasks.Count != 0)
             {
                 List<GET_AllTasksResponse> taskList = new List<GET_AllTasksResponse>();
 

@@ -17,6 +17,27 @@ namespace fehrist.Controllers
     public class AuthController : ApiController
     {
 
+        private readonly UserServices service = new UserServices();
+        public AuthController()
+        {
+
+        }
+
+        public AuthController(UserServices userServices)
+        {
+            this.service = userServices;
+        }
+
+        [HttpPost]
+        [Route("api/user/login")]
+        public ResponseModel<LoginResponse> Login([FromBody] LoginRequest request)
+        {
+            ResponseModel<LoginResponse> res = service.Login_User(request.email, request.password);
+            // Process user login request and return the response
+            return res;
+        }
+
+
         [HttpGet]
         [Route("api/testcall")]
         public string TESTCALL()
@@ -26,20 +47,9 @@ namespace fehrist.Controllers
         }
 
         [HttpPost]
-        [Route("api/user/login")]
-        public ResponseModel<LoginResponse> Login([FromBody] LoginRequest request)
-        {
-            UserServices service = new UserServices();
-            ResponseModel<LoginResponse> res = service.Login_User(request.email, request.password);
-            // Process user login request and return the response
-            return res;
-        }
-
-        [HttpPost]
         [Route("api/user/register")]
         public ResponseModel<RegistrationResponse> Register([FromBody] RegistrationRequest request)
         {
-            UserServices service = new UserServices();
             ResponseModel<RegistrationResponse> res = service.Register_User(request.name, request.email, request.password);
             // Process user registration request and return the response
             return res;

@@ -15,7 +15,19 @@ namespace fehrist.Services
 {
     public class UserServices
     {
-        public ResponseModel<LoginResponse> Login_User(string email, string password)
+
+        private readonly UserAccessor userAccessor = new UserAccessor();
+        public UserServices()
+        {
+
+        }
+
+        public UserServices(UserAccessor userAccessor)
+        {
+            this.userAccessor = userAccessor;
+        }
+
+        public virtual ResponseModel<LoginResponse> Login_User(string email, string password)
         {
             // CHECK PASSWORD MATCH FUNCTIONN
             UserHelpers helper = new UserHelpers();
@@ -26,6 +38,7 @@ namespace fehrist.Services
                 // ERROR: All Data Required
                 response.status = "FAIL";
                 response.msg = "Email/Password fields cannot be empty";
+                response.code = 401;
                 response.response = null;
                 return response;
             }
@@ -34,14 +47,15 @@ namespace fehrist.Services
             {
                 response.status = "FAIL";
                 response.msg = "Invalid email format";
+                response.code = 401;
                 response.response = null;
                 return response;
             }
 
 
             // GENERATE HASH HERE and the call Accessors
-            UserAccessor accessor = new UserAccessor();
-            var hashFromDB = accessor.GET_UserHash(email);
+            //UserAccessor accessor = new UserAccessor();
+            var hashFromDB = userAccessor.GET_UserHash(email);
             if (hashFromDB != null)
             {
                 string storedHash = hashFromDB;
@@ -49,9 +63,10 @@ namespace fehrist.Services
 
                 if (isMatch)
                 {
-                    var result = accessor.Get_UserAccount(email);
+                    var result = userAccessor.Get_UserAccount(email);
                     response.status = "PASS";
-                    response.msg = "Login Succes.";
+                    response.msg = "Login Success.";
+                    response.code = 200;
                     token_handler tokenObj = new token_handler();
                     switch (result.ROLE.NAME)
                     {
@@ -65,7 +80,8 @@ namespace fehrist.Services
                                 email = result.EMAIL,
                                 status = result.AC_STATUS
                             };
-                            var userToken = tokenObj.GetUserToken(userLogin.roleID, userLogin.roleName, userLogin.accountID, userLogin.name, userLogin.email, userLogin.phone, userLogin.status);
+                            var userToken = tokenObj.GetUserToken(userLogin.roleID, userLogin.roleName, userLogin.accountID, 
+                                userLogin.name, userLogin.email, userLogin.status);
                             userLogin.token = userToken;
                             response.response = userLogin;
                             return response;
@@ -78,6 +94,7 @@ namespace fehrist.Services
                     response.status = "FAIL";
                     response.msg = "Invalid Email/Password. Please try again.";
                     response.response = null;
+                    response.code = 401;
                     return response;
                 }
             }
@@ -86,11 +103,12 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "Email address not found. Please try again.";
                 response.response = null;
+                response.code = 404;
                 return response;
             }
         }
 
-        public ResponseModel<RegistrationResponse> Register_User(string name, string email, string password)
+        public virtual ResponseModel<RegistrationResponse> Register_User(string name, string email, string password)
         {
             // Create a helper object to assist with user-related operations
             UserHelpers helper = new UserHelpers();
@@ -103,6 +121,7 @@ namespace fehrist.Services
             {
                 // ERROR: All Data Required
                 response.status = "FAIL";
+                response.code = 401;
                 response.msg = "Please provide your name, email, and password.";
                 response.response = null;
                 return response;
@@ -112,6 +131,7 @@ namespace fehrist.Services
             if (!helper.IsValidEmail(email))
             {
                 response.status = "FAIL";
+                response.code = 401;
                 response.msg = "Invalid email format. Please provide a valid email address.";
                 response.response = null;
                 return response;
@@ -121,6 +141,7 @@ namespace fehrist.Services
             if (!helper.IsValidPassword(password))
             {
                 response.status = "FAIL";
+                response.code = 401;
                 response.msg = "Invalid password. It should have at least 8 characters and contain a combination of letters, digits, and special characters @$!%*#?&.";
                 response.response = null;
                 return response;
@@ -146,6 +167,7 @@ namespace fehrist.Services
                 {
                     response.status = "PASS";
                     response.msg = "Account registered successfully.";
+                    response.code = 201;
 
                     // Create a token handler object for generating user tokens
                     token_handler tokenObj = new token_handler();
@@ -165,7 +187,7 @@ namespace fehrist.Services
                             };
 
                             // Generate a token for the user
-                            var userToken = tokenObj.GetUserToken(userRegister.roleID, userRegister.roleName, userRegister.accountID, userRegister.name, userRegister.email, userRegister.phone, userRegister.status);
+                            var userToken = tokenObj.GetUserToken(userRegister.roleID, userRegister.roleName, userRegister.accountID, userRegister.name, userRegister.email, userRegister.status);
                             userRegister.token = userToken;
 
                             // Set the registration response object in the response
@@ -180,6 +202,7 @@ namespace fehrist.Services
                 else
                 {
                     response.status = "FAIL";
+                    response.code = 409;
                     response.msg = "Email already exists. Please log in using your email.";
                     response.response = null;
                     return response;
@@ -188,13 +211,14 @@ namespace fehrist.Services
             else
             {
                 response.status = "FAIL";
+                response.code = 401;
                 response.msg = "Invalid Role ID. Please try again later.";
                 response.response = null;
                 return response;
             }
         }
 
-        public ResponseModel<List<GET_AllTasksResponse>> GET_Tasks(ClaimsIdentity identity, string state)
+        public virtual ResponseModel<List<GET_AllTasksResponse>> GET_Tasks(ClaimsIdentity identity, string state)
         {
             // Extract the account ID from the claims of the authenticated user
             IEnumerable<Claim> claims = identity.Claims;
@@ -209,11 +233,12 @@ namespace fehrist.Services
             // Create a response object to store the task retrieval response
             ResponseModel<List<GET_AllTasksResponse>> response = new ResponseModel<List<GET_AllTasksResponse>>();
 
-            if (result.Count != 0)
+            if (result != null)
             {
                 response.status = "PASS";
                 response.msg = "Tasks retrieved successfully.";
                 response.response = result;
+                response.code = 200;
                 return response;
             }
             else
@@ -221,11 +246,12 @@ namespace fehrist.Services
                 response.status = "FAIL";
                 response.msg = "No tasks found. Please try again later.";
                 response.response = null;
+                response.code = 404;
                 return response;
             }
         }
 
-        public ResponseModel<GET_AllTasksResponse> GET_Task_Single(ClaimsIdentity identity, int taskID)
+        public  ResponseModel<GET_AllTasksResponse> GET_Task_Single(ClaimsIdentity identity, int taskID)
         {
             // Extract the account ID from the claims of the authenticated user
             IEnumerable<Claim> claims = identity.Claims;
@@ -256,7 +282,7 @@ namespace fehrist.Services
             }
         }
 
-        public GenericResponseModel SET_Task(ClaimsIdentity identity)
+        public virtual GenericResponseModel SET_Task(ClaimsIdentity identity)
         {
             // Extract the account ID from the claims of the authenticated user
             IEnumerable<Claim> claims = identity.Claims;
@@ -331,7 +357,7 @@ namespace fehrist.Services
             }
         }
 
-        public GenericResponseModel Remove_Check(ClaimsIdentity identity, int checkID)
+        public virtual GenericResponseModel Remove_Check(ClaimsIdentity identity, int checkID)
         {
             // Extract the account ID from the claims of the authenticated user
             IEnumerable<Claim> claims = identity.Claims;
@@ -361,7 +387,7 @@ namespace fehrist.Services
             }
         }
 
-        public GenericResponseModel DELETE_Tasks(ClaimsIdentity identity, int taskID)
+        public virtual GenericResponseModel DELETE_Tasks(ClaimsIdentity identity, int taskID)
         {
             // Extract the account ID from the claims of the authenticated user
             IEnumerable<Claim> claims = identity.Claims;
